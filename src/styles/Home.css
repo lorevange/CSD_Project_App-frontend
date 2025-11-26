@@ -66,6 +66,9 @@
     font-size: var(--font-size-md);
     color: var(--text-main);
     margin: 0;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
 }
 
 .info-section {
