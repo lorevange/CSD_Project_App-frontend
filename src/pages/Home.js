@@ -4,7 +4,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import SearchBar from '../components/SearchBar';
 import { specializations } from '../data/mockData';
-import { FaHeartbeat, FaTooth, FaEye, FaUserMd, FaBone, FaBrain, FaBaby } from 'react-icons/fa';
+import { FaHeartbeat, FaTooth, FaEye, FaUserMd, FaBone, FaBrain, FaBaby, FaAppleAlt, FaStethoscope } from 'react-icons/fa';
 import '../styles/Home.css';
 
 const Home = () => {
@@ -18,6 +18,8 @@ const Home = () => {
       case 'bone': return <FaBone />;
       case 'brain': return <FaBrain />;
       case 'baby': return <FaBaby />;
+      case 'apple': return <FaAppleAlt />;
+      case 'stethoscope': return <FaStethoscope />;
       case 'user-md': return <FaUserMd />;
       default: return <FaUserMd />;
     }
@@ -40,7 +42,7 @@ const Home = () => {
       <section className="specializations-section container">
         <h2 className="section-title">{t('specializations.title')}</h2>
         <div className="specializations-grid">
-          {specializations.slice(0, 8).map((spec, index) => (
+          {specializations.slice(0, 12).map((spec, index) => (
             <div key={index} className="specialization-card">
               <div className="spec-icon">{getIconForSpecialization(spec.icon)}</div>
               <h3 className="spec-name">{spec.name}</h3>

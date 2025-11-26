@@ -1,5 +1,5 @@
 .profile-page {
-    background-color: #f9f9f9;
+    background-color: var(--bg-light);
     min-height: 100vh;
 }
 
@@ -26,7 +26,7 @@
     height: 150px;
     border-radius: 50%;
     object-fit: cover;
-    border: 4px solid #f0fdfa;
+    border: 4px solid var(--card-bg);
 }
 
 .profile-name {
@@ -72,7 +72,7 @@
 .profile-section h2 {
     color: var(--color-secondary);
     margin-top: 0;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid var(--divider-color);
     padding-bottom: var(--spacing-sm);
     margin-bottom: var(--spacing-md);
 }
@@ -95,7 +95,8 @@
 }
 
 .map-placeholder {
-    background-color: #e0e0e0;
+    background-color: var(--input-bg);
+    border: 1px solid var(--border-color);
     height: 200px;
     display: flex;
     align-items: center;

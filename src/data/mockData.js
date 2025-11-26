@@ -96,5 +96,8 @@ export const specializations = [
   { name: "Ortopedico", icon: "bone" },
   { name: "Oculista", icon: "eye" },
   { name: "Pediatra", icon: "baby" },
-  { name: "Psicologo", icon: "brain" }
+  { name: "Psicologo", icon: "brain" },
+  { name: "Nutrizionista", icon: "apple" },
+  { name: "Urologo", icon: "user-md" },
+  { name: "Otorinolaringoiatra", icon: "stethoscope" }
 ];
