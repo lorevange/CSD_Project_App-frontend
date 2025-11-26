@@ -47,5 +47,17 @@
         "register_button": "Registrati",
         "already_account": "Hai già un account?",
         "login_link": "Accedi"
+    },
+    "booking": {
+        "title": "Prenota una Visita",
+        "select_date": "Seleziona Data",
+        "select_time": "Seleziona Orario",
+        "confirm": "Conferma Prenotazione",
+        "success": "Prenotazione Confermata!",
+        "success_message": "Riceverai una email di conferma a breve."
+    },
+    "common": {
+        "cancel": "Annulla",
+        "close": "Chiudi"
     }
 }

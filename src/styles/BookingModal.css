@@ -1,0 +1,230 @@
+.booking-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    backdrop-filter: blur(2px);
+}
+
+.booking-modal {
+    background-color: var(--card-bg);
+    border-radius: var(--radius-lg);
+    width: 90%;
+    max-width: 500px;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-header {
+    padding: var(--spacing-lg);
+    border-bottom: 1px solid var(--divider-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 {
+    margin: 0;
+    color: var(--color-secondary);
+    font-size: var(--font-size-xl);
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: var(--text-light);
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.close-btn:hover {
+    color: var(--color-primary);
+}
+
+.modal-content {
+    padding: var(--spacing-lg);
+}
+
+/* Date Selection */
+.date-selection {
+    margin-bottom: var(--spacing-lg);
+}
+
+.section-label {
+    display: block;
+    margin-bottom: var(--spacing-sm);
+    font-weight: bold;
+    color: var(--text-main);
+}
+
+.dates-grid {
+    display: flex;
+    gap: var(--spacing-sm);
+    overflow-x: auto;
+    padding-bottom: var(--spacing-xs);
+}
+
+.date-card {
+    min-width: 60px;
+    padding: var(--spacing-sm);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background-color: var(--bg-light);
+}
+
+.date-card:hover {
+    border-color: var(--color-primary);
+}
+
+.date-card.selected {
+    background-color: var(--color-primary);
+    color: var(--text-white);
+    border-color: var(--color-primary);
+}
+
+.date-card .day {
+    font-size: var(--font-size-sm);
+    display: block;
+    margin-bottom: 2px;
+}
+
+.date-card .date {
+    font-weight: bold;
+    font-size: var(--font-size-lg);
+}
+
+/* Time Selection */
+.time-selection {
+    margin-bottom: var(--spacing-lg);
+}
+
+.times-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: var(--spacing-sm);
+}
+
+.time-slot {
+    padding: var(--spacing-sm);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    text-align: center;
+    cursor: pointer;
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    transition: all 0.2s;
+}
+
+.time-slot:hover {
+    border-color: var(--color-primary);
+}
+
+.time-slot.selected {
+    background-color: var(--color-primary);
+    color: var(--text-white);
+    border-color: var(--color-primary);
+}
+
+/* Confirmation Form */
+.booking-summary {
+    background-color: var(--section-bg);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.summary-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: var(--spacing-xs);
+    color: var(--text-main);
+}
+
+.summary-icon {
+    color: var(--color-primary);
+    margin-right: var(--spacing-sm);
+}
+
+.modal-footer {
+    padding: var(--spacing-lg);
+    border-top: 1px solid var(--divider-color);
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-md);
+}
+
+.btn-cancel {
+    background: none;
+    border: 1px solid var(--border-color);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    color: var(--text-main);
+}
+
+.btn-confirm {
+    background-color: var(--color-primary);
+    color: var(--text-white);
+    border: none;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border-radius: var(--radius-sm);
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-confirm:hover {
+    background-color: var(--color-primary-dark);
+}
+
+.btn-confirm:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Success State */
+.success-state {
+    text-align: center;
+    padding: var(--spacing-xl) 0;
+}
+
+.success-icon {
+    font-size: 64px;
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-md);
+    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn {
+    from {
+        transform: scale(0);
+    }
+
+    to {
+        transform: scale(1);
+    }
+}

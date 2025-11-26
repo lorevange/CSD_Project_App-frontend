@@ -47,5 +47,17 @@
         "register_button": "Register",
         "already_account": "Already have an account?",
         "login_link": "Login"
+    },
+    "booking": {
+        "title": "Book a Visit",
+        "select_date": "Select Date",
+        "select_time": "Select Time",
+        "confirm": "Confirm Booking",
+        "success": "Booking Confirmed!",
+        "success_message": "You will receive an email confirmation shortly."
+    },
+    "common": {
+        "cancel": "Cancel",
+        "close": "Close"
     }
 }

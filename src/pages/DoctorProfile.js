@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import BookingModal from '../components/BookingModal';
 import { doctors } from '../data/mockData';
 import { FaStar, FaMapMarkerAlt, FaStethoscope, FaCheckCircle } from 'react-icons/fa';
 import '../styles/DoctorProfile.css';
@@ -9,6 +10,8 @@ import '../styles/DoctorProfile.css';
 const DoctorProfile = () => {
     const { id } = useParams();
     const doctor = doctors.find(d => d.id === parseInt(id));
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     if (!doctor) {
         return <div>Dottore non trovato</div>;
@@ -75,12 +78,18 @@ const DoctorProfile = () => {
                                 <span>Prima visita</span>
                                 <span className="price">€{doctor.price}</span>
                             </div>
-                            <button className="book-btn-lg">Prenota Ora</button>
+                            <button className="book-btn-lg" onClick={() => setIsModalOpen(true)}>Prenota Ora</button>
                             <p className="booking-note">Nessun pagamento anticipato richiesto</p>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <BookingModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                doctorName={doctor.name}
+            />
 
             <Footer />
         </div>
