@@ -56,6 +56,11 @@
         "success": "Booking Confirmed!",
         "success_message": "You will receive an email confirmation shortly."
     },
+    "reviews": {
+        "title": "Patient Reviews",
+        "average": "Average Rating",
+        "no_reviews": "No reviews yet."
+    },
     "common": {
         "cancel": "Cancel",
         "close": "Close"

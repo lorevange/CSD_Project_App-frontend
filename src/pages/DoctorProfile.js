@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import BookingModal from '../components/BookingModal';
+import ReviewsList from '../components/ReviewsList';
 import { doctors } from '../data/mockData';
 import { FaStar, FaMapMarkerAlt, FaStethoscope, FaCheckCircle } from 'react-icons/fa';
 import '../styles/DoctorProfile.css';
@@ -69,6 +70,12 @@ const DoctorProfile = () => {
                             {/* Placeholder for map */}
                             <div className="map-placeholder">Mappa non disponibile</div>
                         </section>
+
+                        <ReviewsList
+                            reviews={doctor.reviews}
+                            averageRating={doctor.rating}
+                            totalReviews={doctor.reviewsCount}
+                        />
                     </div>
 
                     <div className="profile-right">

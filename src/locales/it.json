@@ -56,6 +56,11 @@
         "success": "Prenotazione Confermata!",
         "success_message": "Riceverai una email di conferma a breve."
     },
+    "reviews": {
+        "title": "Dicono di lui/lei",
+        "average": "Valutazione Media",
+        "no_reviews": "Nessuna recensione ancora."
+    },
     "common": {
         "cancel": "Annulla",
         "close": "Chiudi"
