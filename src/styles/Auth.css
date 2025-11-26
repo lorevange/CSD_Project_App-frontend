@@ -1,0 +1,110 @@
+.auth-page {
+    background-color: #f0f2f5;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.auth-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: var(--spacing-xl) var(--spacing-md);
+}
+
+.auth-card {
+    background-color: var(--bg-main);
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    width: 100%;
+    max-width: 400px;
+}
+
+.auth-card h2 {
+    text-align: center;
+    color: var(--color-secondary);
+    margin-bottom: var(--spacing-lg);
+}
+
+.auth-tabs {
+    display: flex;
+    margin-bottom: var(--spacing-lg);
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.tab-btn {
+    flex: 1;
+    background: none;
+    border: none;
+    padding: var(--spacing-md);
+    font-weight: bold;
+    color: var(--text-light);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.3s;
+}
+
+.tab-btn.active {
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
+}
+
+.form-group {
+    margin-bottom: var(--spacing-md);
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: var(--spacing-xs);
+    color: var(--text-main);
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: var(--spacing-sm);
+    border: 1px solid #ccc;
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-md);
+    box-sizing: border-box;
+    /* Fix for width issue */
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: var(--color-primary);
+    outline: none;
+}
+
+.auth-btn {
+    width: 100%;
+    background-color: var(--color-primary);
+    color: var(--text-white);
+    padding: var(--spacing-md);
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-md);
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: var(--spacing-sm);
+}
+
+.auth-btn:hover {
+    background-color: var(--color-primary-dark);
+}
+
+.auth-footer {
+    text-align: center;
+    margin-top: var(--spacing-lg);
+    font-size: var(--font-size-sm);
+    color: var(--text-light);
+}
+
+.auth-footer a {
+    color: var(--color-primary);
+    font-weight: bold;
+}

@@ -1,0 +1,110 @@
+.header {
+    background-color: var(--bg-main);
+    box-shadow: var(--shadow-sm);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    height: 70px;
+    display: flex;
+    align-items: center;
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-md);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    font-size: var(--font-size-xl);
+    font-weight: bold;
+    color: var(--color-primary);
+}
+
+.logo-icon {
+    margin-right: var(--spacing-xs);
+    font-size: 28px;
+}
+
+.nav-list {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+}
+
+.nav-link {
+    font-weight: 500;
+    color: var(--text-main);
+    transition: color 0.3s;
+}
+
+.nav-link:hover {
+    color: var(--color-primary);
+}
+
+.btn-login {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.btn-doctor {
+    background-color: var(--color-secondary);
+    color: var(--text-white);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-sm);
+    transition: background-color 0.3s;
+}
+
+.btn-doctor:hover {
+    background-color: #2c3e50;
+    color: var(--text-white);
+}
+
+.mobile-menu-icon {
+    display: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--text-main);
+}
+
+@media (max-width: 768px) {
+    .mobile-menu-icon {
+        display: block;
+    }
+
+    .nav-menu {
+        position: absolute;
+        top: 70px;
+        left: 0;
+        width: 100%;
+        background-color: var(--bg-main);
+        flex-direction: column;
+        box-shadow: var(--shadow-md);
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-in-out;
+    }
+
+    .nav-menu.active {
+        max-height: 300px;
+    }
+
+    .nav-list {
+        flex-direction: column;
+        width: 100%;
+        padding: var(--spacing-md) 0;
+        gap: var(--spacing-md);
+    }
+
+    .nav-item {
+        width: 100%;
+        text-align: center;
+    }
+}

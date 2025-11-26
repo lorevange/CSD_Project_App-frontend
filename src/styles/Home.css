@@ -1,0 +1,107 @@
+.hero-section {
+    background: linear-gradient(135deg, var(--color-primary) 0%, #00b8d4 100%);
+    padding: 80px 0 100px;
+    text-align: center;
+    color: var(--text-white);
+}
+
+.hero-title {
+    font-size: 48px;
+    margin-bottom: var(--spacing-md);
+    font-weight: 700;
+}
+
+.hero-subtitle {
+    font-size: var(--font-size-xl);
+    margin-bottom: var(--spacing-xxl);
+    opacity: 0.9;
+}
+
+.hero-search {
+    position: relative;
+    z-index: 10;
+}
+
+.section-title {
+    text-align: center;
+    font-size: var(--font-size-xxl);
+    color: var(--text-main);
+    margin: var(--spacing-xxl) 0 var(--spacing-xl);
+}
+
+.specializations-section {
+    padding: var(--spacing-xl) var(--spacing-md);
+}
+
+.specializations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.specialization-card {
+    background-color: var(--bg-main);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-lg);
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+    border: 1px solid #f0f0f0;
+}
+
+.specialization-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-primary);
+}
+
+.spec-icon {
+    font-size: 40px;
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-md);
+}
+
+.spec-name {
+    font-size: var(--font-size-md);
+    color: var(--text-main);
+    margin: 0;
+}
+
+.info-section {
+    background-color: #f0fdfa;
+    padding: 80px 0;
+    margin-top: var(--spacing-xxl);
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing-xl);
+    padding: 0 var(--spacing-md);
+}
+
+.info-card {
+    text-align: center;
+}
+
+.info-card h3 {
+    color: var(--color-secondary);
+    font-size: var(--font-size-xl);
+    margin-bottom: var(--spacing-md);
+}
+
+.info-card p {
+    color: var(--text-light);
+    line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 32px;
+    }
+
+    .hero-subtitle {
+        font-size: var(--font-size-lg);
+    }
+}
