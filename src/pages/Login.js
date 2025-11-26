@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import '../styles/Auth.css';
 
 const Login = () => {
+    const { t } = useTranslation();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
@@ -21,10 +23,10 @@ const Login = () => {
             <Header />
             <div className="auth-container">
                 <div className="auth-card">
-                    <h2>Accedi</h2>
+                    <h2>{t('auth.login_title')}</h2>
                     <form onSubmit={handleSubmit}>
                         <div className="form-group">
-                            <label>Email</label>
+                            <label>{t('auth.email')}</label>
                             <input
                                 type="email"
                                 value={email}
@@ -33,7 +35,7 @@ const Login = () => {
                             />
                         </div>
                         <div className="form-group">
-                            <label>Password</label>
+                            <label>{t('auth.password')}</label>
                             <input
                                 type="password"
                                 value={password}
@@ -41,10 +43,10 @@ const Login = () => {
                                 required
                             />
                         </div>
-                        <button type="submit" className="auth-btn">Accedi</button>
+                        <button type="submit" className="auth-btn">{t('auth.login_button')}</button>
                     </form>
                     <p className="auth-footer">
-                        Non hai un account? <Link to="/register">Registrati</Link>
+                        {t('auth.no_account')} <Link to="/register">{t('auth.register_link')}</Link>
                     </p>
                 </div>
             </div>

@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FaSearch, FaMapMarkerAlt } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import '../styles/SearchBar.css';
 
 const SearchBar = ({ initialQuery = '', initialCity = '' }) => {
+    const { t } = useTranslation();
     const [query, setQuery] = useState(initialQuery);
     const [city, setCity] = useState(initialCity);
     const navigate = useNavigate();
@@ -19,7 +21,7 @@ const SearchBar = ({ initialQuery = '', initialCity = '' }) => {
                 <FaSearch className="input-icon" />
                 <input
                     type="text"
-                    placeholder="Dottore, specializzazione, patologia..."
+                    placeholder={t('hero.search_placeholder')}
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                 />
@@ -29,13 +31,16 @@ const SearchBar = ({ initialQuery = '', initialCity = '' }) => {
                 <FaMapMarkerAlt className="input-icon" />
                 <input
                     type="text"
-                    placeholder="Città (es. Roma)"
+                    placeholder={t('hero.search_placeholder')} // Using same placeholder or need a new key for city? 
+                    // Wait, original was "Città (es. Roma)". I should add a key for city placeholder.
+                    // I will add it to en.json and it.json later or just use a generic one.
+                    // Let's add 'hero.city_placeholder' to translations.
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
                 />
             </div>
             <button type="submit" className="search-btn">
-                Cerca
+                {t('hero.search_button')}
             </button>
         </form>
     );

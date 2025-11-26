@@ -1,17 +1,24 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import SearchBar from '../components/SearchBar';
 import { specializations } from '../data/mockData';
-import { FaHeartbeat, FaTooth, FaEye, FaUserMd } from 'react-icons/fa';
+import { FaHeartbeat, FaTooth, FaEye, FaUserMd, FaBone, FaBrain, FaBaby } from 'react-icons/fa';
 import '../styles/Home.css';
 
 const Home = () => {
-  const getIconForSpecialization = (spec) => {
-    switch (spec) {
-      case 'Cardiologo': return <FaHeartbeat />;
-      case 'Dentista': return <FaTooth />;
-      case 'Oculista': return <FaEye />;
+  const { t } = useTranslation();
+
+  const getIconForSpecialization = (iconName) => {
+    switch (iconName) {
+      case 'heartbeat': return <FaHeartbeat />;
+      case 'tooth': return <FaTooth />;
+      case 'eye': return <FaEye />;
+      case 'bone': return <FaBone />;
+      case 'brain': return <FaBrain />;
+      case 'baby': return <FaBaby />;
+      case 'user-md': return <FaUserMd />;
       default: return <FaUserMd />;
     }
   };
@@ -22,8 +29,8 @@ const Home = () => {
 
       <section className="hero-section">
         <div className="container">
-          <h1 className="hero-title">Trova il tuo specialista e prenota una visita</h1>
-          <p className="hero-subtitle">Oltre 2 milioni di pazienti trovano il loro dottore ogni mese</p>
+          <h1 className="hero-title">{t('hero.title')}</h1>
+          <p className="hero-subtitle">{t('hero.subtitle')}</p>
           <div className="hero-search">
             <SearchBar />
           </div>
@@ -31,12 +38,12 @@ const Home = () => {
       </section>
 
       <section className="specializations-section container">
-        <h2 className="section-title">Le specializzazioni più cercate</h2>
+        <h2 className="section-title">{t('specializations.title')}</h2>
         <div className="specializations-grid">
           {specializations.slice(0, 8).map((spec, index) => (
             <div key={index} className="specialization-card">
-              <div className="spec-icon">{getIconForSpecialization(spec)}</div>
-              <h3 className="spec-name">{spec}</h3>
+              <div className="spec-icon">{getIconForSpecialization(spec.icon)}</div>
+              <h3 className="spec-name">{spec.name}</h3>
             </div>
           ))}
         </div>
@@ -45,16 +52,16 @@ const Home = () => {
       <section className="info-section">
         <div className="container info-grid">
           <div className="info-card">
-            <h3>Cerca dottori</h3>
-            <p>Trova lo specialista più adatto alle tue esigenze tra migliaia di profili verificati.</p>
+            <h3>{t('doctors.title')}</h3>
+            <p>{t('footer.about_text')}</p>
           </div>
           <div className="info-card">
-            <h3>Leggi le recensioni</h3>
-            <p>Scegli basandoti sulle esperienze reali di altri pazienti.</p>
+            <h3>{t('doctors.reviews')}</h3>
+            <p>{t('hero.subtitle')}</p>
           </div>
           <div className="info-card">
-            <h3>Prenota online</h3>
-            <p>Prenota la tua visita in pochi click, 24 ore su 24, 7 giorni su 7.</p>
+            <h3>{t('doctors.book')}</h3>
+            <p>{t('hero.title')}</p>
           </div>
         </div>
       </section>

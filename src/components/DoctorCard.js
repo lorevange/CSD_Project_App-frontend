@@ -1,9 +1,11 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { FaStar, FaMapMarkerAlt, FaStethoscope } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import '../styles/DoctorCard.css';
 
 const DoctorCard = ({ doctor }) => {
+    const { t } = useTranslation();
     return (
         <div className="doctor-card">
             <div className="doctor-image-container">
@@ -27,7 +29,7 @@ const DoctorCard = ({ doctor }) => {
                         />
                     ))}
                     <span className="rating-text">
-                        {doctor.rating} ({doctor.reviewsCount} recensioni)
+                        {doctor.rating} ({doctor.reviewsCount} {t('doctors.reviews')})
                     </span>
                 </div>
                 <div className="doctor-services">
@@ -42,7 +44,7 @@ const DoctorCard = ({ doctor }) => {
             <div className="doctor-actions">
                 <div className="price-tag">Da €{doctor.price}</div>
                 <Link to={`/doctor/${doctor.id}`} className="book-btn">
-                    Prenota una visita
+                    {t('doctors.book')}
                 </Link>
             </div>
         </div>

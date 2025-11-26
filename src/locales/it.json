@@ -1,0 +1,51 @@
+{
+    "app": {
+        "title": "MedCare"
+    },
+    "nav": {
+        "home": "Home",
+        "login": "Accedi / Registrati",
+        "doctor": "Sei un dottore?"
+    },
+    "hero": {
+        "title": "La tua salute, la nostra priorità",
+        "subtitle": "Prenota visite con i migliori specialisti della tua città",
+        "search_placeholder": "Dottore, specializzazione, patologia...",
+        "search_button": "Cerca"
+    },
+    "specializations": {
+        "title": "Le nostre specializzazioni"
+    },
+    "doctors": {
+        "title": "Dottori in evidenza",
+        "rating": "Valutazione",
+        "reviews": "recensioni",
+        "price": "Prezzo",
+        "book": "Prenota Visita"
+    },
+    "footer": {
+        "about": "Chi Siamo",
+        "about_text": "MedCare è la piattaforma leader per la prenotazione di visite mediche online.",
+        "links": "Link Rapidi",
+        "contact": "Contattaci",
+        "rights": "Tutti i diritti riservati."
+    },
+    "auth": {
+        "login_title": "Accedi",
+        "email": "Email",
+        "password": "Password",
+        "login_button": "Accedi",
+        "no_account": "Non hai un account?",
+        "register_link": "Registrati",
+        "register_title": "Registrati",
+        "patient": "Paziente",
+        "doctor": "Dottore",
+        "name_surname": "Nome e Cognome",
+        "specialization": "Specializzazione",
+        "city": "Città",
+        "select": "Seleziona...",
+        "register_button": "Registrati",
+        "already_account": "Hai già un account?",
+        "login_link": "Accedi"
+    }
+}

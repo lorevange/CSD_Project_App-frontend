@@ -1,0 +1,51 @@
+{
+    "app": {
+        "title": "MedCare"
+    },
+    "nav": {
+        "home": "Home",
+        "login": "Login / Register",
+        "doctor": "Are you a doctor?"
+    },
+    "hero": {
+        "title": "Your Health, Our Priority",
+        "subtitle": "Book visits with the best specialists in your city",
+        "search_placeholder": "Doctor, specialization, condition...",
+        "search_button": "Search"
+    },
+    "specializations": {
+        "title": "Our Specializations"
+    },
+    "doctors": {
+        "title": "Featured Doctors",
+        "rating": "Rating",
+        "reviews": "reviews",
+        "price": "Price",
+        "book": "Book Visit"
+    },
+    "footer": {
+        "about": "About Us",
+        "about_text": "MedCare is the leading platform for booking medical visits online.",
+        "links": "Quick Links",
+        "contact": "Contact Us",
+        "rights": "All rights reserved."
+    },
+    "auth": {
+        "login_title": "Login",
+        "email": "Email",
+        "password": "Password",
+        "login_button": "Login",
+        "no_account": "Don't have an account?",
+        "register_link": "Register",
+        "register_title": "Register",
+        "patient": "Patient",
+        "doctor": "Doctor",
+        "name_surname": "Name and Surname",
+        "specialization": "Specialization",
+        "city": "City",
+        "select": "Select...",
+        "register_button": "Register",
+        "already_account": "Already have an account?",
+        "login_link": "Login"
+    }
+}

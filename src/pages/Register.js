@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import '../styles/Auth.css';
 
 const Register = () => {
+    const { t } = useTranslation();
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
     const initialType = searchParams.get('type') === 'doctor' ? 'doctor' : 'patient';
@@ -35,26 +37,26 @@ const Register = () => {
             <Header />
             <div className="auth-container">
                 <div className="auth-card">
-                    <h2>Registrati</h2>
+                    <h2>{t('auth.register_title')}</h2>
 
                     <div className="auth-tabs">
                         <button
                             className={`tab-btn ${userType === 'patient' ? 'active' : ''}`}
                             onClick={() => setUserType('patient')}
                         >
-                            Paziente
+                            {t('auth.patient')}
                         </button>
                         <button
                             className={`tab-btn ${userType === 'doctor' ? 'active' : ''}`}
                             onClick={() => setUserType('doctor')}
                         >
-                            Dottore
+                            {t('auth.doctor')}
                         </button>
                     </div>
 
                     <form onSubmit={handleSubmit}>
                         <div className="form-group">
-                            <label>Nome e Cognome</label>
+                            <label>{t('auth.name_surname')}</label>
                             <input
                                 type="text"
                                 name="name"
@@ -64,7 +66,7 @@ const Register = () => {
                             />
                         </div>
                         <div className="form-group">
-                            <label>Email</label>
+                            <label>{t('auth.email')}</label>
                             <input
                                 type="email"
                                 name="email"
@@ -74,7 +76,7 @@ const Register = () => {
                             />
                         </div>
                         <div className="form-group">
-                            <label>Password</label>
+                            <label>{t('auth.password')}</label>
                             <input
                                 type="password"
                                 name="password"
@@ -87,14 +89,14 @@ const Register = () => {
                         {userType === 'doctor' && (
                             <>
                                 <div className="form-group">
-                                    <label>Specializzazione</label>
+                                    <label>{t('auth.specialization')}</label>
                                     <select
                                         name="specialization"
                                         value={formData.specialization}
                                         onChange={handleChange}
                                         required
                                     >
-                                        <option value="">Seleziona...</option>
+                                        <option value="">{t('auth.select')}</option>
                                         <option value="Cardiologo">Cardiologo</option>
                                         <option value="Dermatologo">Dermatologo</option>
                                         <option value="Dentista">Dentista</option>
@@ -102,7 +104,7 @@ const Register = () => {
                                     </select>
                                 </div>
                                 <div className="form-group">
-                                    <label>Città</label>
+                                    <label>{t('auth.city')}</label>
                                     <input
                                         type="text"
                                         name="city"
@@ -114,10 +116,10 @@ const Register = () => {
                             </>
                         )}
 
-                        <button type="submit" className="auth-btn">Registrati</button>
+                        <button type="submit" className="auth-btn">{t('auth.register_button')}</button>
                     </form>
                     <p className="auth-footer">
-                        Hai già un account? <Link to="/login">Accedi</Link>
+                        {t('auth.already_account')} <Link to="/login">{t('auth.login_link')}</Link>
                     </p>
                 </div>
             </div>
