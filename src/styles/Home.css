@@ -1,5 +1,5 @@
 .hero-section {
-    background: linear-gradient(135deg, var(--color-primary) 0%, #00b8d4 100%);
+    background: linear-gradient(135deg, var(--hero-gradient-start) 0%, var(--hero-gradient-end) 100%);
     padding: 80px 0 100px;
     text-align: center;
     color: var(--text-white);
@@ -35,19 +35,19 @@
 
 .specializations-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     gap: var(--spacing-lg);
 }
 
 .specialization-card {
-    background-color: var(--bg-main);
+    background-color: var(--card-bg);
     border-radius: var(--radius-md);
     padding: var(--spacing-lg);
     text-align: center;
     box-shadow: var(--shadow-sm);
-    transition: transform 0.3s, box-shadow 0.3s;
+    transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
     cursor: pointer;
-    border: 1px solid #f0f0f0;
+    border: 1px solid var(--border-color);
 }
 
 .specialization-card:hover {
@@ -69,14 +69,14 @@
 }
 
 .info-section {
-    background-color: #f0fdfa;
+    background-color: var(--section-bg);
     padding: 80px 0;
     margin-top: var(--spacing-xxl);
 }
 
 .info-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: var(--spacing-xl);
     padding: 0 var(--spacing-md);
 }
@@ -103,5 +103,14 @@
 
     .hero-subtitle {
         font-size: var(--font-size-lg);
+    }
+
+    .hero-section {
+        padding: 60px 0 80px;
+    }
+
+    .specializations-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-md);
     }
 }

@@ -17,6 +17,24 @@
   --bg-main: #ffffff;
   --bg-light: #f9f9f9;
   --bg-dark: #3d4c53;
+  --section-bg: #f0fdfa;
+  /* Light teal for sections */
+  --card-bg: #ffffff;
+  --input-bg: #ffffff;
+
+  /* Borders & Dividers */
+  --border-color: #e0e0e0;
+  --divider-color: #e0e0e0;
+  --input-border: #cccccc;
+
+  /* Gradients */
+  --hero-gradient-start: #00d3a9;
+  --hero-gradient-end: #00b8d4;
+
+  /* Misc */
+  --star-empty: #e0e0e0;
+  --star-filled: #ffc107;
+  --tag-bg: #f9f9f9;
 
   /* Spacing */
   --spacing-xs: 4px;
@@ -61,6 +79,23 @@
   --bg-main: #1a1a1a;
   --bg-light: #2d2d2d;
   --bg-dark: #000000;
+  --section-bg: #252525;
+  --card-bg: #1e1e1e;
+  --input-bg: #2d2d2d;
+
+  /* Borders & Dividers */
+  --border-color: #404040;
+  --divider-color: #404040;
+  --input-border: #505050;
+
+  /* Gradients */
+  --hero-gradient-start: #004d40;
+  --hero-gradient-end: #006064;
+
+  /* Misc */
+  --star-empty: #505050;
+  --star-filled: #ffca28;
+  --tag-bg: #2d2d2d;
 
   /* Shadows */
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);

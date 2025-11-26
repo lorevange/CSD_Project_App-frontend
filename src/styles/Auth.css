@@ -1,5 +1,5 @@
 .auth-page {
-    background-color: #f0f2f5;
+    background-color: var(--section-bg);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -14,12 +14,13 @@
 }
 
 .auth-card {
-    background-color: var(--bg-main);
+    background-color: var(--card-bg);
     padding: var(--spacing-xl);
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-md);
     width: 100%;
     max-width: 400px;
+    border: 1px solid var(--border-color);
 }
 
 .auth-card h2 {
@@ -31,7 +32,7 @@
 .auth-tabs {
     display: flex;
     margin-bottom: var(--spacing-lg);
-    border-bottom: 2px solid #e0e0e0;
+    border-bottom: 2px solid var(--border-color);
 }
 
 .tab-btn {
@@ -66,11 +67,13 @@
 .form-group select {
     width: 100%;
     padding: var(--spacing-sm);
-    border: 1px solid #ccc;
+    border: 1px solid var(--input-border);
     border-radius: var(--radius-sm);
     font-size: var(--font-size-md);
     box-sizing: border-box;
     /* Fix for width issue */
+    background-color: var(--input-bg);
+    color: var(--text-main);
 }
 
 .form-group input:focus,

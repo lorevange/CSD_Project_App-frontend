@@ -1,6 +1,6 @@
 .footer {
     background-color: var(--bg-main);
-    border-top: 1px solid #e0e0e0;
+    border-top: 1px solid var(--border-color);
     padding: var(--spacing-xxl) 0 var(--spacing-lg);
     margin-top: auto;
 }
@@ -39,7 +39,7 @@
     text-align: center;
     margin-top: var(--spacing-xl);
     padding-top: var(--spacing-lg);
-    border-top: 1px solid #f0f0f0;
+    border-top: 1px solid var(--divider-color);
     color: var(--text-light);
     font-size: var(--font-size-sm);
 }

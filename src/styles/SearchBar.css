@@ -1,6 +1,6 @@
 .search-bar {
     display: flex;
-    background-color: var(--bg-main);
+    background-color: var(--input-bg);
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-lg);
     padding: var(--spacing-sm);
@@ -8,6 +8,7 @@
     width: 100%;
     margin: 0 auto;
     align-items: center;
+    border: 1px solid var(--border-color);
 }
 
 .input-group {
@@ -30,12 +31,13 @@
     font-size: var(--font-size-md);
     color: var(--text-main);
     padding: var(--spacing-sm) 0;
+    background-color: transparent;
 }
 
 .divider {
     width: 1px;
     height: 30px;
-    background-color: #e0e0e0;
+    background-color: var(--divider-color);
 }
 
 .search-btn {
@@ -62,7 +64,7 @@
 
     .input-group {
         width: 100%;
-        border-bottom: 1px solid #f0f0f0;
+        border-bottom: 1px solid var(--border-color);
         padding-bottom: var(--spacing-sm);
     }
 
