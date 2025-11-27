@@ -8,7 +8,7 @@ import { FaHeartbeat, FaTooth, FaEye, FaUserMd, FaBone, FaBrain, FaBaby, FaApple
 import '../styles/Home.css';
 
 const Home = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const getIconForSpecialization = (iconName) => {
     switch (iconName) {
@@ -45,7 +45,7 @@ const Home = () => {
           {specializations.slice(0, 12).map((spec, index) => (
             <div key={index} className="specialization-card">
               <div className="spec-icon">{getIconForSpecialization(spec.icon)}</div>
-              <h3 className="spec-name">{spec.name}</h3>
+              <h3 className="spec-name">{spec.name[i18n.language]}</h3>
             </div>
           ))}
         </div>

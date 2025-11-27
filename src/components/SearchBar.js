@@ -31,7 +31,7 @@ const SearchBar = ({ initialQuery = '', initialCity = '' }) => {
                 <FaMapMarkerAlt className="input-icon" />
                 <input
                     type="text"
-                    placeholder={t('hero.search_placeholder')} // Using same placeholder or need a new key for city? 
+                    placeholder={t('hero.city_placeholder')}
                     // Wait, original was "Città (es. Roma)". I should add a key for city placeholder.
                     // I will add it to en.json and it.json later or just use a generic one.
                     // Let's add 'hero.city_placeholder' to translations.

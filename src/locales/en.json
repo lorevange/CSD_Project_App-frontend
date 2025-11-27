@@ -11,6 +11,7 @@
         "title": "Your Health, Our Priority",
         "subtitle": "Book visits with the best specialists in your city",
         "search_placeholder": "Doctor, specialization, condition...",
+        "city_placeholder": "City (e.g. Rome)",
         "search_button": "Search"
     },
     "specializations": {
@@ -54,7 +55,9 @@
         "select_time": "Select Time",
         "confirm": "Confirm Booking",
         "success": "Booking Confirmed!",
-        "success_message": "You will receive an email confirmation shortly."
+        "success_message": "You will receive an email confirmation shortly.",
+        "book_now": "Book Now",
+        "no_prepayment": "No prepayment required"
     },
     "reviews": {
         "title": "Patient Reviews",
@@ -64,5 +67,13 @@
     "common": {
         "cancel": "Cancel",
         "close": "Close"
+    },
+    "doctor_profile": {
+        "not_found": "Doctor not found",
+        "info": "Information",
+        "services": "Services Offered",
+        "address": "Address",
+        "map_placeholder": "Map not available",
+        "first_visit": "First Visit"
     }
 }

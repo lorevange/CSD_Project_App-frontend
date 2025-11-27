@@ -11,6 +11,7 @@
         "title": "La tua salute, la nostra priorità",
         "subtitle": "Prenota visite con i migliori specialisti della tua città",
         "search_placeholder": "Dottore, specializzazione, patologia...",
+        "city_placeholder": "Città (es. Roma)",
         "search_button": "Cerca"
     },
     "specializations": {
@@ -54,7 +55,9 @@
         "select_time": "Seleziona Orario",
         "confirm": "Conferma Prenotazione",
         "success": "Prenotazione Confermata!",
-        "success_message": "Riceverai una email di conferma a breve."
+        "success_message": "Riceverai una email di conferma a breve.",
+        "book_now": "Prenota Ora",
+        "no_prepayment": "Nessun pagamento anticipato richiesto"
     },
     "reviews": {
         "title": "Dicono di lui/lei",
@@ -64,5 +67,13 @@
     "common": {
         "cancel": "Annulla",
         "close": "Chiudi"
+    },
+    "doctor_profile": {
+        "not_found": "Dottore non trovato",
+        "info": "Informazioni",
+        "services": "Servizi offerti",
+        "address": "Indirizzo",
+        "map_placeholder": "Mappa non disponibile",
+        "first_visit": "Prima visita"
     }
 }

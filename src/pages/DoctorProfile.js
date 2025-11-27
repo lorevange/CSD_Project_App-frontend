@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -10,12 +11,13 @@ import '../styles/DoctorProfile.css';
 
 const DoctorProfile = () => {
     const { id } = useParams();
+    const { t, i18n } = useTranslation();
     const doctor = doctors.find(d => d.id === parseInt(id));
 
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     if (!doctor) {
-        return <div>Dottore non trovato</div>;
+        return <div>{t('doctor_profile.not_found')}</div>;
     }
 
     return (
@@ -30,7 +32,7 @@ const DoctorProfile = () => {
                     <div className="profile-main-info">
                         <h1 className="profile-name">{doctor.name}</h1>
                         <p className="profile-specialization">
-                            <FaStethoscope className="icon" /> {doctor.specialization}
+                            <FaStethoscope className="icon" /> {doctor.specialization[i18n.language]}
                         </p>
                         <div className="profile-rating">
                             {[...Array(5)].map((_, i) => (
@@ -39,7 +41,7 @@ const DoctorProfile = () => {
                                     className={`star ${i < Math.round(doctor.rating) ? 'filled' : ''}`}
                                 />
                             ))}
-                            <span className="rating-count">{doctor.reviewsCount} recensioni</span>
+                            <span className="rating-count">{doctor.reviewsCount} {t('doctors.reviews')}</span>
                         </div>
                     </div>
                 </div>
@@ -47,14 +49,14 @@ const DoctorProfile = () => {
                 <div className="profile-content">
                     <div className="profile-left">
                         <section className="profile-section">
-                            <h2>Informazioni</h2>
-                            <p className="profile-bio">{doctor.bio}</p>
+                            <h2>{t('doctor_profile.info')}</h2>
+                            <p className="profile-bio">{doctor.bio[i18n.language]}</p>
                         </section>
 
                         <section className="profile-section">
-                            <h2>Servizi offerti</h2>
+                            <h2>{t('doctor_profile.services')}</h2>
                             <ul className="services-list">
-                                {doctor.services.map((service, index) => (
+                                {doctor.services[i18n.language].map((service, index) => (
                                     <li key={index} className="service-item">
                                         <FaCheckCircle className="check-icon" /> {service}
                                     </li>
@@ -63,12 +65,12 @@ const DoctorProfile = () => {
                         </section>
 
                         <section className="profile-section">
-                            <h2>Indirizzo</h2>
+                            <h2>{t('doctor_profile.address')}</h2>
                             <p className="profile-address">
                                 <FaMapMarkerAlt className="icon" /> {doctor.address}, {doctor.city}
                             </p>
                             {/* Placeholder for map */}
-                            <div className="map-placeholder">Mappa non disponibile</div>
+                            <div className="map-placeholder">{t('doctor_profile.map_placeholder')}</div>
                         </section>
 
                         <ReviewsList
@@ -80,13 +82,13 @@ const DoctorProfile = () => {
 
                     <div className="profile-right">
                         <div className="booking-card">
-                            <h3>Prenota una visita</h3>
+                            <h3>{t('booking.title')}</h3>
                             <div className="price-info">
-                                <span>Prima visita</span>
+                                <span>{t('doctor_profile.first_visit')}</span>
                                 <span className="price">€{doctor.price}</span>
                             </div>
-                            <button className="book-btn-lg" onClick={() => setIsModalOpen(true)}>Prenota Ora</button>
-                            <p className="booking-note">Nessun pagamento anticipato richiesto</p>
+                            <button className="book-btn-lg" onClick={() => setIsModalOpen(true)}>{t('booking.book_now')}</button>
+                            <p className="booking-note">{t('booking.no_prepayment')}</p>
                         </div>
                     </div>
                 </div>
