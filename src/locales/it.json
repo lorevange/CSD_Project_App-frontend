@@ -47,7 +47,8 @@
         "select": "Seleziona...",
         "register_button": "Registrati",
         "already_account": "Hai già un account?",
-        "login_link": "Accedi"
+        "login_link": "Accedi",
+        "registration_success": "Registrazione effettuata con successo!"
     },
     "booking": {
         "title": "Prenota una Visita",
@@ -75,5 +76,11 @@
         "address": "Indirizzo",
         "map_placeholder": "Mappa non disponibile",
         "first_visit": "Prima visita"
+    },
+    "search_results": {
+        "results_found": "risultati trovati",
+        "in": "a",
+        "no_results": "Nessun dottore trovato con questi criteri di ricerca.",
+        "try_modifying": "Prova a modificare i filtri o cerca in un'altra città."
     }
 }

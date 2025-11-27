@@ -47,7 +47,8 @@
         "select": "Select...",
         "register_button": "Register",
         "already_account": "Already have an account?",
-        "login_link": "Login"
+        "login_link": "Login",
+        "registration_success": "Registration successful!"
     },
     "booking": {
         "title": "Book a Visit",
@@ -75,5 +76,11 @@
         "address": "Address",
         "map_placeholder": "Map not available",
         "first_visit": "First Visit"
+    },
+    "search_results": {
+        "results_found": "results found",
+        "in": "in",
+        "no_results": "No doctors found matching your search criteria.",
+        "try_modifying": "Try modifying filters or search in another city."
     }
 }

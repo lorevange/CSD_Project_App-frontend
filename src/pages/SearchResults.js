@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import SearchBar from '../components/SearchBar';
@@ -8,6 +9,7 @@ import { doctors } from '../data/mockData';
 import '../styles/SearchResults.css';
 
 const SearchResults = () => {
+    const { t } = useTranslation();
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
     const initialQuery = searchParams.get('query') || '';
@@ -17,14 +19,27 @@ const SearchResults = () => {
 
     useEffect(() => {
         const results = doctors.filter(doctor => {
-            const matchNameOrSpec =
-                doctor.name.toLowerCase().includes(initialQuery.toLowerCase()) ||
-                doctor.specialization.toLowerCase().includes(initialQuery.toLowerCase());
+            const queryLower = initialQuery.toLowerCase();
+            const cityLower = initialCity.toLowerCase();
 
-            const matchCity =
-                doctor.city.toLowerCase().includes(initialCity.toLowerCase());
+            // Check name
+            const matchName = doctor.name.toLowerCase().includes(queryLower);
 
-            return matchNameOrSpec && matchCity;
+            // Check specialization in both languages
+            const matchSpec =
+                doctor.specialization.it.toLowerCase().includes(queryLower) ||
+                doctor.specialization.en.toLowerCase().includes(queryLower);
+
+            // Check services in both languages
+            const matchServices =
+                doctor.services.it.some(s => s.toLowerCase().includes(queryLower)) ||
+                doctor.services.en.some(s => s.toLowerCase().includes(queryLower));
+
+            const matchQuery = matchName || matchSpec || matchServices;
+
+            const matchCity = doctor.city.toLowerCase().includes(cityLower);
+
+            return matchQuery && matchCity;
         });
         setFilteredDoctors(results);
     }, [initialQuery, initialCity]);
@@ -40,8 +55,8 @@ const SearchResults = () => {
 
             <div className="container results-container">
                 <h2 className="results-title">
-                    {filteredDoctors.length} risultati trovati
-                    {initialCity && ` a ${initialCity}`}
+                    {filteredDoctors.length} {t('search_results.results_found')}
+                    {initialCity && ` ${t('search_results.in')} ${initialCity}`}
                 </h2>
 
                 <div className="results-list">
@@ -51,8 +66,8 @@ const SearchResults = () => {
                         ))
                     ) : (
                         <div className="no-results">
-                            <p>Nessun dottore trovato con questi criteri di ricerca.</p>
-                            <p>Prova a modificare i filtri o cerca in un'altra città.</p>
+                            <p>{t('search_results.no_results')}</p>
+                            <p>{t('search_results.try_modifying')}</p>
                         </div>
                     )}
                 </div>

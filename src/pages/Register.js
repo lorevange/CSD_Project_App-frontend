@@ -5,8 +5,10 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import '../styles/Auth.css';
 
+import { specializations } from '../data/mockData'; // Import specializations
+
 const Register = () => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation(); // Add i18n
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
     const initialType = searchParams.get('type') === 'doctor' ? 'doctor' : 'patient';
@@ -28,7 +30,7 @@ const Register = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         // Mock registration
-        alert(`Registrazione ${userType === 'doctor' ? 'Dottore' : 'Paziente'} effettuata!`);
+        alert(t('auth.registration_success')); // Localized alert
         navigate('/login');
     };
 
@@ -97,10 +99,11 @@ const Register = () => {
                                         required
                                     >
                                         <option value="">{t('auth.select')}</option>
-                                        <option value="Cardiologo">Cardiologo</option>
-                                        <option value="Dermatologo">Dermatologo</option>
-                                        <option value="Dentista">Dentista</option>
-                                        {/* Add more options */}
+                                        {specializations.map((spec, index) => (
+                                            <option key={index} value={spec.name.it}>
+                                                {spec.name[i18n.language]}
+                                            </option>
+                                        ))}
                                     </select>
                                 </div>
                                 <div className="form-group">
