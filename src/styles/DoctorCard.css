@@ -5,12 +5,14 @@
     box-shadow: var(--shadow-sm);
     padding: var(--spacing-lg);
     margin-bottom: var(--spacing-md);
-    transition: box-shadow 0.3s;
+    transition: box-shadow 0.3s, transform 0.3s, border-color 0.3s;
     border: 1px solid var(--border-color);
 }
 
 .doctor-card:hover {
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-3px);
+    border-color: var(--color-primary-light);
 }
 
 .doctor-image-container {

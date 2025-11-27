@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FaTimes, FaCalendarAlt, FaClock, FaCheckCircle, FaUser } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 import '../styles/BookingModal.css';
 
 const BookingModal = ({ isOpen, onClose, doctorName }) => {
@@ -42,6 +43,7 @@ const BookingModal = ({ isOpen, onClose, doctorName }) => {
 
     const handleConfirm = () => {
         setStep(2); // Move to success state
+        toast.success(t('booking.success_message'));
     };
 
     const resetAndClose = () => {
