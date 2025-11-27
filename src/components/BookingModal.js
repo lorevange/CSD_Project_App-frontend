@@ -4,7 +4,7 @@ import { FaTimes, FaCalendarAlt, FaClock, FaCheckCircle, FaUser } from 'react-ic
 import '../styles/BookingModal.css';
 
 const BookingModal = ({ isOpen, onClose, doctorName }) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const [step, setStep] = useState(1);
     const [selectedDate, setSelectedDate] = useState(null);
     const [selectedTime, setSelectedTime] = useState(null);
@@ -18,7 +18,7 @@ const BookingModal = ({ isOpen, onClose, doctorName }) => {
             const date = new Date();
             date.setDate(date.getDate() + i + 1); // Start from tomorrow
             days.push({
-                day: date.toLocaleDateString('it-IT', { weekday: 'short' }),
+                day: date.toLocaleDateString(i18n.language, { weekday: 'short' }),
                 date: date.getDate(),
                 fullDate: date
             });
