@@ -5,6 +5,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import SearchBar from '../components/SearchBar';
 import DoctorCard from '../components/DoctorCard';
+import SkeletonCard from '../components/SkeletonCard';
 import { doctors } from '../data/mockData';
 import '../styles/SearchResults.css';
 
@@ -16,35 +17,43 @@ const SearchResults = () => {
     const initialCity = searchParams.get('city') || '';
 
     const [filteredDoctors, setFilteredDoctors] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        const results = doctors.filter(doctor => {
-            const queryLower = initialQuery.toLowerCase();
-            const cityLower = initialCity.toLowerCase();
+        setIsLoading(true);
+        // Simulate network delay
+        const timer = setTimeout(() => {
+            const results = doctors.filter(doctor => {
+                const queryLower = initialQuery.toLowerCase();
+                const cityLower = initialCity.toLowerCase();
 
-            // Check name
-            const matchName = doctor.name.toLowerCase().includes(queryLower);
+                // Check name
+                const matchName = doctor.name.toLowerCase().includes(queryLower);
 
-            // Check specialization in both languages
-            const matchSpec =
-                doctor.specialization.it.toLowerCase().includes(queryLower) ||
-                doctor.specialization.en.toLowerCase().includes(queryLower);
+                // Check specialization in both languages
+                const matchSpec =
+                    doctor.specialization.it.toLowerCase().includes(queryLower) ||
+                    doctor.specialization.en.toLowerCase().includes(queryLower);
 
-            // Check services in both languages
-            const matchServices =
-                doctor.services.it.some(s => s.toLowerCase().includes(queryLower)) ||
-                doctor.services.en.some(s => s.toLowerCase().includes(queryLower));
+                // Check services in both languages
+                const matchServices =
+                    doctor.services.it.some(s => s.toLowerCase().includes(queryLower)) ||
+                    doctor.services.en.some(s => s.toLowerCase().includes(queryLower));
 
-            // Check city in query as well, in case user typed city in main box
-            const matchCityInQuery = doctor.city.toLowerCase().includes(queryLower);
+                // Check city in query as well, in case user typed city in main box
+                const matchCityInQuery = doctor.city.toLowerCase().includes(queryLower);
 
-            const matchQuery = matchName || matchSpec || matchServices || matchCityInQuery;
+                const matchQuery = matchName || matchSpec || matchServices || matchCityInQuery;
 
-            const matchCity = doctor.city.toLowerCase().includes(cityLower);
+                const matchCity = doctor.city.toLowerCase().includes(cityLower);
 
-            return matchQuery && matchCity;
-        });
-        setFilteredDoctors(results);
+                return matchQuery && matchCity;
+            });
+            setFilteredDoctors(results);
+            setIsLoading(false);
+        }, 2000); // 2 second delay
+
+        return () => clearTimeout(timer);
     }, [initialQuery, initialCity]);
 
     return (
@@ -58,12 +67,21 @@ const SearchResults = () => {
 
             <div className="container results-container">
                 <h2 className="results-title">
-                    {filteredDoctors.length} {t('search_results.results_found')}
-                    {initialCity && ` ${t('search_results.in')} ${initialCity}`}
+                    {isLoading ? (
+                        t('search_results.searching', 'Searching...')
+                    ) : (
+                        <>
+                            {filteredDoctors.length} {t('search_results.results_found')}
+                            {initialCity && ` ${t('search_results.in')} ${initialCity}`}
+                        </>
+                    )}
                 </h2>
 
                 <div className="results-list">
-                    {filteredDoctors.length > 0 ? (
+                    {isLoading ? (
+                        // Render 3 skeleton cards while loading
+                        [...Array(3)].map((_, index) => <SkeletonCard key={index} />)
+                    ) : filteredDoctors.length > 0 ? (
                         filteredDoctors.map(doctor => (
                             <DoctorCard key={doctor.id} doctor={doctor} />
                         ))

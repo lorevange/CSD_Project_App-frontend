@@ -1,0 +1,76 @@
+.skeleton-card {
+    pointer-events: none;
+    /* Prevent interaction */
+}
+
+.skeleton-image {
+    background-color: #e0e0e0;
+    animation: pulse 1.5s infinite ease-in-out;
+}
+
+.skeleton-text {
+    background-color: #e0e0e0;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    animation: pulse 1.5s infinite ease-in-out;
+}
+
+.skeleton-title {
+    height: 24px;
+    width: 60%;
+    margin-bottom: 12px;
+}
+
+.skeleton-line {
+    height: 16px;
+    width: 90%;
+}
+
+.skeleton-line.short {
+    width: 40%;
+}
+
+.skeleton-tag {
+    display: inline-block;
+    height: 24px;
+    width: 80px;
+    background-color: #e0e0e0;
+    border-radius: 12px;
+    margin-right: 8px;
+    animation: pulse 1.5s infinite ease-in-out;
+}
+
+.skeleton-price {
+    height: 20px;
+    width: 80px;
+    margin-bottom: 0;
+}
+
+.skeleton-btn {
+    height: 40px;
+    width: 120px;
+    background-color: #e0e0e0;
+    border-radius: 4px;
+    animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.6;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0.6;
+    }
+}
+
+/* Mobile adjustments to match DoctorCard layout */
+@media (max-width: 768px) {
+    .skeleton-btn {
+        width: 100%;
+    }
+}
