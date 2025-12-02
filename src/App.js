@@ -7,6 +7,8 @@ import DoctorProfile from "./pages/DoctorProfile";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 
+import BottomNav from "./components/BottomNav";
+
 function App() {
   return (
     <BrowserRouter>
@@ -18,6 +20,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
       </Routes>
+      <BottomNav />
     </BrowserRouter>
   );
 }
