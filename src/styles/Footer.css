@@ -43,3 +43,71 @@
     color: var(--text-light);
     font-size: var(--font-size-sm);
 }
+
+.accordion-icon {
+    display: none;
+    /* Hidden on desktop */
+}
+
+/* Mobile Accordion Styles */
+@media (max-width: 768px) {
+    .footer-container {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        /* Remove gap, handle with padding in sections */
+    }
+
+    .footer-section {
+        border-bottom: 1px solid var(--border-color);
+        padding: var(--spacing-md) 0;
+    }
+
+    .footer-section:last-child {
+        border-bottom: none;
+    }
+
+    .footer-section h3 {
+        margin-bottom: var(--spacing-sm);
+    }
+
+    /* Accordion Header */
+    .accordion-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        margin-bottom: 0;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .accordion-icon {
+        display: block;
+        font-size: 12px;
+        transition: transform 0.3s ease;
+        color: var(--text-light);
+    }
+
+    .accordion-icon.open {
+        transform: rotate(180deg);
+    }
+
+    /* Accordion Content */
+    .accordion-content {
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+        transition: all 0.3s ease-in-out;
+        margin-top: 0;
+        padding-left: var(--spacing-sm);
+        /* Indent list items */
+    }
+
+    .accordion-content.open {
+        max-height: 300px;
+        /* Sufficient height for content */
+        opacity: 1;
+        margin-top: var(--spacing-sm);
+    }
+}
