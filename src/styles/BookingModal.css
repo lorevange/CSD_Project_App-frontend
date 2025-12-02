@@ -21,6 +21,10 @@
     overflow: hidden;
     border: 1px solid var(--border-color);
     animation: slideIn 0.3s ease-out;
+    max-height: 90vh;
+    /* Ensure it fits on screen */
+    display: flex;
+    flex-direction: column;
 }
 
 @keyframes slideIn {
@@ -41,6 +45,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-shrink: 0;
 }
 
 .modal-header h2 {
@@ -64,6 +69,9 @@
 
 .modal-content {
     padding: var(--spacing-lg);
+    overflow-y: auto;
+    /* Allow scrolling */
+    flex: 1;
 }
 
 /* Date Selection */
@@ -83,6 +91,8 @@
     gap: var(--spacing-sm);
     overflow-x: auto;
     padding-bottom: var(--spacing-xs);
+    -webkit-overflow-scrolling: touch;
+    /* Smooth scrolling on iOS */
 }
 
 .date-card {
@@ -175,6 +185,7 @@
     display: flex;
     justify-content: flex-end;
     gap: var(--spacing-md);
+    flex-shrink: 0;
 }
 
 .btn-cancel {
@@ -226,5 +237,22 @@
 
     to {
         transform: scale(1);
+    }
+}
+
+@media (max-width: 480px) {
+    .modal-footer {
+        flex-direction: column-reverse;
+    }
+
+    .btn-cancel,
+    .btn-confirm {
+        width: 100%;
+        text-align: center;
+        padding: 12px;
+    }
+
+    .times-grid {
+        grid-template-columns: repeat(3, 1fr);
     }
 }

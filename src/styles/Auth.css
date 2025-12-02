@@ -111,3 +111,25 @@
     color: var(--color-primary);
     font-weight: bold;
 }
+
+@media (max-width: 480px) {
+    .auth-container {
+        padding: var(--spacing-md);
+        align-items: flex-start;
+        /* Align to top on mobile */
+        padding-top: 40px;
+    }
+
+    .auth-card {
+        padding: var(--spacing-lg);
+        box-shadow: none;
+        /* Simplify on mobile */
+        border: none;
+        background-color: transparent;
+    }
+
+    .auth-page {
+        background-color: var(--card-bg);
+        /* Make whole page white on mobile */
+    }
+}

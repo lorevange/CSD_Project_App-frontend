@@ -102,10 +102,12 @@
 @media (max-width: 768px) {
     .hero-title {
         font-size: 32px;
+        padding: 0 var(--spacing-md);
     }
 
     .hero-subtitle {
         font-size: var(--font-size-lg);
+        padding: 0 var(--spacing-md);
     }
 
     .hero-section {
@@ -115,5 +117,25 @@
     .specializations-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: var(--spacing-md);
+    }
+
+    .info-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-xl);
+    }
+
+    .section-title {
+        font-size: 28px;
+        margin: var(--spacing-xl) 0 var(--spacing-lg);
+    }
+}
+
+@media (max-width: 480px) {
+    .specializations-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-title {
+        font-size: 28px;
     }
 }
