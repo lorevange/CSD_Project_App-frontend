@@ -1,0 +1,49 @@
+.offline-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: var(--bg-main);
+    text-align: center;
+    padding: var(--spacing-lg);
+}
+
+.offline-content {
+    background-color: var(--card-bg);
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    max-width: 400px;
+    width: 100%;
+}
+
+.offline-icon {
+    font-size: 64px;
+    color: var(--text-light);
+    margin-bottom: var(--spacing-md);
+}
+
+.offline-page h2 {
+    color: var(--text-main);
+    margin-bottom: var(--spacing-sm);
+}
+
+.offline-page p {
+    color: var(--text-light);
+    margin-bottom: var(--spacing-lg);
+}
+
+.retry-btn {
+    background-color: var(--color-primary);
+    color: var(--text-white);
+    border: none;
+    padding: var(--spacing-md) var(--spacing-xl);
+    border-radius: var(--radius-sm);
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.retry-btn:hover {
+    background-color: var(--color-primary-dark);
+}
