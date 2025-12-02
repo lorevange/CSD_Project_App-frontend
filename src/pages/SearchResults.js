@@ -35,7 +35,10 @@ const SearchResults = () => {
                 doctor.services.it.some(s => s.toLowerCase().includes(queryLower)) ||
                 doctor.services.en.some(s => s.toLowerCase().includes(queryLower));
 
-            const matchQuery = matchName || matchSpec || matchServices;
+            // Check city in query as well, in case user typed city in main box
+            const matchCityInQuery = doctor.city.toLowerCase().includes(queryLower);
+
+            const matchQuery = matchName || matchSpec || matchServices || matchCityInQuery;
 
             const matchCity = doctor.city.toLowerCase().includes(cityLower);
 
