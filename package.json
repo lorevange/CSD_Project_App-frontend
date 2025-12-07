@@ -1,6 +1,7 @@
 {
   "name": "medcare",
   "version": "0.1.0",
+  "type": "module",
   "private": true,
   "dependencies": {
     "i18next": "^25.6.3",
