@@ -100,6 +100,16 @@
     background-color: var(--color-primary-dark);
 }
 
+.auth-error {
+    margin: var(--spacing-sm) 0;
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    background-color: #ffecec;
+    color: #a40000;
+    border: 1px solid #ffb3b3;
+    font-size: var(--font-size-sm);
+}
+
 .auth-footer {
     text-align: center;
     margin-top: var(--spacing-lg);

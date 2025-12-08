@@ -5,17 +5,39 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import '../styles/Auth.css';
 
+import { tryLogin } from '../api/login';
+
 const Login = () => {
     const { t } = useTranslation();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [loginErrorMessage, setLoginErrorMessage] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isLoginError, setIsLoginError] = useState(false);
     const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
+    const resetErrorOnChange = (setter) => (value) => {
+        setter(value);
+        if (isLoginError) {
+            setIsLoginError(false);
+            setLoginErrorMessage('');
+        }
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Mock login
-        alert('Login effettuato con successo!');
-        navigate('/');
+        setIsSubmitting(true);
+        try {
+            await tryLogin(email, password);
+            alert(t('auth.login_success'));
+            navigate('/');
+        } catch (error) {
+            console.error('Login failed', error);
+            setIsLoginError(true);
+            setLoginErrorMessage(t('auth.login_error', 'Login failed, please try again.'));
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -30,7 +52,7 @@ const Login = () => {
                             <input
                                 type="email"
                                 value={email}
-                                onChange={(e) => setEmail(e.target.value)}
+                                onChange={(e) => resetErrorOnChange(setEmail)(e.target.value)}
                                 required
                             />
                         </div>
@@ -39,11 +61,18 @@ const Login = () => {
                             <input
                                 type="password"
                                 value={password}
-                                onChange={(e) => setPassword(e.target.value)}
+                                onChange={(e) => resetErrorOnChange(setPassword)(e.target.value)}
                                 required
                             />
                         </div>
-                        <button type="submit" className="auth-btn">{t('auth.login_button')}</button>
+                        {isLoginError && (
+                            <div className="auth-error">
+                                {loginErrorMessage || t('auth.login_error', 'Login failed, please try again.')}
+                            </div>
+                        )}
+                        <button type="submit" className="auth-btn" disabled={isSubmitting}>
+                            {t('auth.login_button')}
+                        </button>
                     </form>
                     <p className="auth-footer">
                         {t('auth.no_account')} <Link to="/register">{t('auth.register_link')}</Link>
