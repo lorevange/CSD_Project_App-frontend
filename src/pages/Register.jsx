@@ -6,6 +6,7 @@ import Footer from '../components/Footer';
 import '../styles/Auth.css';
 
 import { specializations } from '../data/mockData'; // Import specializations
+import { registerUser } from '../api/registration';
 
 const Register = () => {
     const { t, i18n } = useTranslation(); // Add i18n
@@ -15,24 +16,65 @@ const Register = () => {
 
     const [userType, setUserType] = useState(initialType);
     const [formData, setFormData] = useState({
-        name: '',
+        first_name: '',
+        last_name: '',
+        identity_number: '',
         email: '',
         phone: '',
+        license_number: '',
         password: '',
+        confirm_password: '',
         specialization: '',
         city: ''
     });
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [passwordError, setPasswordError] = useState(null);
     const navigate = useNavigate();
 
     const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        const nextData = { ...formData, [name]: value };
+        setFormData(nextData);
+
+        if (name === 'password' || name === 'confirm_password') {
+            setPasswordError(validatePassword(nextData));
+        }
     };
 
-    const handleSubmit = (e) => {
+    const validatePassword = (data = formData) => {
+        const password = data.password || '';
+        const confirm = data.confirm_password || '';
+
+        if (password.length < 8) return t('auth.password_length', 'Password must be at least 8 characters.');
+        if (!/[0-9]/.test(password)) return t('auth.password_number', 'Password must contain at least one number.');
+        if (!/[a-z]/.test(password)) return t('auth.password_lowercase', 'Password must contain at least one lowercase letter.');
+        if (!/[A-Z]/.test(password)) return t('auth.password_uppercase', 'Password must contain at least one uppercase letter.');
+        if (!/[!@#$%^&*(),.?":{}|<>_\-+=\[\]\\;/`~]/.test(password)) return t('auth.password_special', 'Password must contain at least one special character.');
+        if (password !== confirm) return t('auth.password_match', 'Passwords must match.');
+        return null;
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Mock registration
-        alert(t('auth.registration_success')); // Localized alert
-        navigate('/login');
+
+        const passwordError = validatePassword();
+        if (passwordError) {
+            alert(passwordError);
+            return;
+        }
+
+        setIsSubmitting(true);
+
+        try {
+            await registerUser(userType, formData);
+            alert(t('auth.registration_success'));
+            navigate('/login');
+        } catch (error) {
+            console.error('Registration failed', error);
+            alert(t('auth.registration_error', 'Registration failed, please try again.'));
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -59,11 +101,31 @@ const Register = () => {
 
                     <form onSubmit={handleSubmit}>
                         <div className="form-group">
-                            <label>{t('auth.name_surname')}</label>
+                            <label>{t('auth.first_name')}</label>
                             <input
                                 type="text"
-                                name="name"
-                                value={formData.name}
+                                name="first_name"
+                                value={formData.first_name}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label>{t('auth.last_name')}</label>
+                            <input
+                                type="text"
+                                name="last_name"
+                                value={formData.last_name}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label>{t('auth.identity_number')}</label>
+                            <input
+                                type="text"
+                                name="identity_number"
+                                value={formData.identity_number}
                                 onChange={handleChange}
                                 required
                             />
@@ -99,9 +161,34 @@ const Register = () => {
                                 required
                             />
                         </div>
+                        <div className="form-group">
+                            <label>{t('auth.confirm_password', 'Confirm Password')}</label>
+                            <input
+                                type="password"
+                                name="confirm_password"
+                                value={formData.confirm_password}
+                                onChange={handleChange}
+                                required
+                            />
+                            {passwordError && (
+                                <p style={{ color: 'red', fontSize: '0.9rem', marginTop: '4px' }}>
+                                    {passwordError}
+                                </p>
+                            )}
+                        </div>
 
                         {userType === 'doctor' && (
                             <>
+                                <div className="form-group">
+                                    <label>{t('auth.license_number', 'License Number')}</label>
+                                    <input
+                                        type="text"
+                                        name="license_number"
+                                        value={formData.license_number}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
                                 <div className="form-group">
                                     <label>{t('auth.specialization')}</label>
                                     <select
@@ -131,7 +218,9 @@ const Register = () => {
                             </>
                         )}
 
-                        <button type="submit" className="auth-btn">{t('auth.register_button')}</button>
+                        <button type="submit" className="auth-btn" disabled={isSubmitting}>
+                            {t('auth.register_button')}
+                        </button>
                     </form>
                     <p className="auth-footer">
                         {t('auth.already_account')} <Link to="/login">{t('auth.login_link')}</Link>
