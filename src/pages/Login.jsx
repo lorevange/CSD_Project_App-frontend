@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
@@ -6,9 +6,11 @@ import Footer from '../components/Footer';
 import '../styles/Auth.css';
 
 import { tryLogin } from '../api/login';
+import { UserContext } from '../context/UserContext';
 
 const Login = () => {
     const { t } = useTranslation();
+    const { login } = useContext(UserContext);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loginErrorMessage, setLoginErrorMessage] = useState('');
@@ -27,14 +29,19 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
+
         try {
-            await tryLogin(email, password);
-            alert(t('auth.login_success'));
+            const userData = await tryLogin(email, password);
+
+            // ⭐ Salva l’utente nel context + localStorage
+            login(userData);
+
             navigate('/');
+
         } catch (error) {
             console.error('Login failed', error);
             setIsLoginError(true);
-            setLoginErrorMessage(t('auth.login_error', 'Login failed, please try again.'));
+            setLoginErrorMessage(t('auth.login_error'));
         } finally {
             setIsSubmitting(false);
         }
@@ -65,11 +72,9 @@ const Login = () => {
                                 required
                             />
                         </div>
-                        {isLoginError && (
-                            <div className="auth-error">
-                                {loginErrorMessage || t('auth.login_error', 'Login failed, please try again.')}
-                            </div>
-                        )}
+
+                        {isLoginError && <div className="auth-error">{loginErrorMessage}</div>}
+
                         <button type="submit" className="auth-btn" disabled={isSubmitting}>
                             {t('auth.login_button')}
                         </button>
@@ -85,3 +90,4 @@ const Login = () => {
 };
 
 export default Login;
+
