@@ -238,6 +238,17 @@
     transform: translateY(-1px);
 }
 
+.profile-btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+.profile-btn.primary:disabled {
+    background: var(--color-primary-dark);
+}
+
 .profile-btn.ghost {
     background: transparent;
     color: var(--text-main);

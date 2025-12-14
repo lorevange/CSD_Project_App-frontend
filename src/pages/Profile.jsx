@@ -53,6 +53,7 @@ const Profile = () => {
     const committedFirstName = user?.first_name || '';
     const committedLastName = user?.last_name || '';
     const avatarLetters = committedFirstName.slice(0, 1) + committedLastName.slice(0, 1);
+    const isDirty = firstName !== committedFirstName || lastName !== committedLastName;
 
     const handleNamesSave = (e) => {
         e.preventDefault();
@@ -154,7 +155,7 @@ const Profile = () => {
                                 </div>
                             </div>
                             <div className="profile-actions">
-                                <button type="submit" className="profile-btn primary">
+                                <button type="submit" className="profile-btn primary" disabled={!isDirty}>
                                     {t('profile.save_changes', 'Save changes')}
                                 </button>
                             </div>
