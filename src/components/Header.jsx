@@ -43,9 +43,9 @@ const Header = () => {
                         {user ? (
                             <>
                                 <li className="nav-item">
-                                    <span className="nav-link header-user">
+                                    <Link to="/profile" className="nav-link header-user" onClick={toggleMenu}>
                                         {user.first_name} {user.last_name}
-                                    </span>
+                                    </Link>
                                 </li>
                                 <li className="nav-item">
                                     <button className="btn-logout" onClick={handleLogout}>
