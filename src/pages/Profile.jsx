@@ -130,7 +130,6 @@ const Profile = () => {
                             <div>
                                 <p className="eyebrow">{t('profile.details', 'Details')}</p>
                                 <h3>{t('profile.edit_name_title', 'Update your info')}</h3>
-                                <p className="section-hint">{t('profile.edit_name_hint', 'Changes are stored locally for now')}</p>
                             </div>
                         </div>
                         <form className="profile-form" onSubmit={handleNamesSave}>
