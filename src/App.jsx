@@ -7,7 +7,7 @@ import SearchResults from "./pages/SearchResults";
 import DoctorProfile from "./pages/DoctorProfile";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-
+import { UserProvider } from './context/UserContext';
 import BottomNav from "./components/BottomNav";
 import OfflinePage from "./components/OfflinePage";
 
@@ -45,5 +45,7 @@ function App() {
     </BrowserRouter>
   );
 }
+
+ 
 
 export default App;

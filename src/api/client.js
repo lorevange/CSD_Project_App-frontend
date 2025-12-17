@@ -6,7 +6,16 @@ export async function apiRequest(path, options = {}) {
     }
 
     const url = new URL(path, API_BASE_URL).toString();
-    const headers = { 'Content-Type': 'application/json', ...(options.headers || {}) };
+
+    // Leggi il token dal localStorage
+    const token = localStorage.getItem('token');
+
+    // Aggiungi l'header Authorization se il token esiste
+    const headers = {
+        'Content-Type': 'application/json',
+        ...(options.headers || {}),
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+    };
 
     const response = await fetch(url, { ...options, headers });
     const contentType = response.headers.get('content-type') || '';
