@@ -1,21 +1,27 @@
-import { createContext, useEffect, useState } from "react";
+import React, { createContext, useState, useEffect } from 'react';
 import { updateUserFirstNameLastName } from '../api/updateUser';
 
-export const UserContext = createContext(null);
+export const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
     const [user, setUser] = useState(null);
 
+    // Carica l’utente da localStorage al mount
     useEffect(() => {
-        const storedUser = localStorage.getItem("user");
-        if (storedUser) {
-            setUser(JSON.parse(storedUser));
+    try {
+        const savedUser = localStorage.getItem('user');
+        if (savedUser) {
+            setUser(JSON.parse(savedUser));
         }
-    }, []);
+    } catch (error) {
+        console.error("Failed to parse user from localStorage", error);
+        setUser(null);
+    }
+}, []);
 
     const login = (userData) => {
-        localStorage.setItem("user", JSON.stringify(userData));
         setUser(userData);
+        localStorage.setItem('user', JSON.stringify(userData));
     };
 
     const updateUser = async (partialUser) => {
@@ -32,8 +38,9 @@ export const UserProvider = ({ children }) => {
     };
 
     const logout = () => {
-        localStorage.removeItem("user");
         setUser(null);
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
     };
 
     return (

@@ -49,7 +49,7 @@ const Header = () => {
                                 </li>
                                 <li className="nav-item">
                                     <button className="btn-logout" onClick={handleLogout}>
-                                        Logout
+                                        {t('nav.logout', 'Logout')}
                                     </button>
                                 </li>
                             </>
