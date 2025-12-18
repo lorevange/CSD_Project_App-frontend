@@ -1,44 +1,64 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaBars, FaTimes, FaUserMd, FaUser, FaSun, FaMoon } from 'react-icons/fa';
 import { useTheme } from '../context/ThemeContext';
 import { UserContext } from '../context/UserContext';
+import Spinner from './Spinner';
 import '../styles/Header.css';
 
 const Header = () => {
     const [isOpen, setIsOpen] = useState(false);
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
     const { t, i18n } = useTranslation();
     const { theme, toggleTheme } = useTheme();
-    const { user, logout } = useContext(UserContext);
+    const { user, logout, isAuthChecking } = useContext(UserContext);
     const navigate = useNavigate();
+    const logoutTimerRef = useRef(null);
 
     const toggleMenu = () => setIsOpen(!isOpen);
     const changeLanguage = (lng) => i18n.changeLanguage(lng);
     const handleLogout = () => {
-        logout();
-        navigate('/');
+        if (isLoggingOut) {
+            return;
+        }
+        setIsLoggingOut(true);
+        setIsOpen(false);
+        logoutTimerRef.current = setTimeout(() => {
+            logout();
+            navigate('/');
+            setIsLoggingOut(false);
+        },2000);
     };
 
+    useEffect(() => {
+        return () => {
+            if (logoutTimerRef.current) {
+                clearTimeout(logoutTimerRef.current);
+            }
+        };
+    }, []);
+
     return (
-        <header className="header">
-            <div className="container header-container">
-                <Link to="/" className="logo">
-                    <FaUserMd className="logo-icon" />
-                    <span>{t('app.title')}</span>
-                </Link>
+        <>
+            <header className="header">
+                <div className="container header-container">
+                    <Link to="/" className="logo">
+                        <FaUserMd className="logo-icon" />
+                        <span>{t('app.title')}</span>
+                    </Link>
 
-                <div className="mobile-menu-icon" onClick={toggleMenu}>
-                    {isOpen ? <FaTimes /> : <FaBars />}
-                </div>
+                    <div className="mobile-menu-icon" onClick={toggleMenu}>
+                        {isOpen ? <FaTimes /> : <FaBars />}
+                    </div>
 
-                <nav className={`nav-menu ${isOpen ? 'active' : ''}`}>
-                    <ul className="nav-list">
-                        <li className="nav-item">
-                            <Link to="/" className="nav-link" onClick={toggleMenu}>
-                                {t('nav.home')}
-                            </Link>
-                        </li>
+                    <nav className={`nav-menu ${isOpen ? 'active' : ''}`}>
+                        <ul className="nav-list">
+                            <li className="nav-item">
+                                <Link to="/" className="nav-link" onClick={toggleMenu}>
+                                    {t('nav.home')}
+                                </Link>
+                            </li>
 
                         {user ? (
                             <>
@@ -48,11 +68,15 @@ const Header = () => {
                                     </Link>
                                 </li>
                                 <li className="nav-item">
-                                    <button className="btn-logout" onClick={handleLogout}>
-                                        Logout
+                                    <button className="btn-logout" onClick={handleLogout} disabled={isLoggingOut}>
+                                        {t('nav.logout', 'Logout')}
                                     </button>
                                 </li>
                             </>
+                        ) : isAuthChecking ? (
+                            <li className="nav-item">
+                                <div className="auth-loading-chip" aria-label="Checking your session" />
+                            </li>
                         ) : (
                             <>
                                 <li className="nav-item">
@@ -60,39 +84,44 @@ const Header = () => {
                                         <FaUser className="icon" /> {t('nav.login')}
                                     </Link>
                                 </li>
-                                <li className="nav-item">
-                                    <Link to="/register?type=doctor" className="nav-link btn-doctor" onClick={toggleMenu}>
-                                        {t('nav.doctor')}
-                                    </Link>
-                                </li>
-                            </>
-                        )}
+                                    <li className="nav-item">
+                                        <Link to="/register?type=doctor" className="nav-link btn-doctor" onClick={toggleMenu}>
+                                            {t('nav.doctor')}
+                                        </Link>
+                                    </li>
+                                </>
+                            )}
 
-                        <li className="nav-item language-switcher">
-                            <button
-                                onClick={() => changeLanguage('it')}
-                                className={`lang-btn ${i18n.language === 'it' ? 'active' : ''}`}
-                            >
-                                IT
-                            </button>
-                            <span className="lang-separator">|</span>
-                            <button
-                                onClick={() => changeLanguage('en')}
-                                className={`lang-btn ${i18n.language === 'en' ? 'active' : ''}`}
-                            >
-                                EN
-                            </button>
-                        </li>
+                            <li className="nav-item language-switcher">
+                                <button
+                                    onClick={() => changeLanguage('it')}
+                                    className={`lang-btn ${i18n.language === 'it' ? 'active' : ''}`}
+                                >
+                                    IT
+                                </button>
+                                <span className="lang-separator">|</span>
+                                <button
+                                    onClick={() => changeLanguage('en')}
+                                    className={`lang-btn ${i18n.language === 'en' ? 'active' : ''}`}
+                                >
+                                    EN
+                                </button>
+                            </li>
 
-                        <li className="nav-item theme-toggle">
-                            <button onClick={toggleTheme} className="theme-btn">
-                                {theme === 'light' ? <FaMoon /> : <FaSun />}
-                            </button>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
-        </header>
+                            <li className="nav-item theme-toggle">
+                                <button onClick={toggleTheme} className="theme-btn">
+                                    {theme === 'light' ? <FaMoon /> : <FaSun />}
+                                </button>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </header>
+            <Spinner
+                show={isLoggingOut}
+                message="You are being logged out..."
+            />
+        </>
     );
 };
 
