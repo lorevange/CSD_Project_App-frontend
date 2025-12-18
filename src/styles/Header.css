@@ -141,6 +141,55 @@
     background-color: #2c3e50;
 }
 
+.logout-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-lg);
+    z-index: 2000;
+}
+
+.logout-card {
+    background-color: var(--bg-main);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    max-width: 520px;
+    width: 100%;
+    text-align: center;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border-color);
+}
+
+.logout-spinner {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto var(--spacing-md);
+    border-radius: 50%;
+    border: 4px solid var(--border-color);
+    border-top-color: var(--color-primary);
+    border-right-color: var(--color-primary-dark);
+    animation: logout-spin 0.9s linear infinite;
+}
+
+.logout-message {
+    color: var(--text-main);
+    font-size: var(--font-size-md);
+    line-height: 1.5;
+    margin: 0;
+}
+
+@keyframes logout-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 @media (max-width: 768px) {
     .mobile-menu-icon {
         display: block;
