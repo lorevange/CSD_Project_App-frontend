@@ -8,6 +8,7 @@ import DoctorProfile from "./pages/DoctorProfile";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import { UserProvider } from './context/UserContext';
+import Profile from "./pages/Profile";
 import BottomNav from "./components/BottomNav";
 import OfflinePage from "./components/OfflinePage";
 
@@ -40,6 +41,7 @@ function App() {
         <Route path="/doctor/:id" element={<DoctorProfile />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
       <BottomNav />
     </BrowserRouter>

@@ -71,7 +71,12 @@ const Register = () => {
             navigate('/login');
         } catch (error) {
             console.error('Registration failed', error);
-            alert(t('auth.registration_error', 'Registration failed, please try again.'));
+            const message = error?.message;
+            if (message) {
+                alert(message);
+            } else {
+                alert(t('auth.registration_error', 'Registration failed, please try again.'));
+            }
         } finally {
             setIsSubmitting(false);
         }
