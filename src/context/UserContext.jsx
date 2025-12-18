@@ -1,33 +1,33 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState } from 'react';
 import { updateUserFirstNameLastName } from '../api/updateUser';
 
 export const UserContext = createContext();
 
-export const UserProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
-
-    // Carica l’utente da localStorage al mount
-    useEffect(() => {
+const readStoredUser = () => {
     try {
         const savedUser = localStorage.getItem('user');
-        if (savedUser) {
-            setUser(JSON.parse(savedUser));
-        }
+        return savedUser ? JSON.parse(savedUser) : null;
     } catch (error) {
-        console.error("Failed to parse user from localStorage", error);
-        setUser(null);
+        console.error('Failed to parse user from localStorage', error);
+        return null;
     }
-}, []);
+};
+
+export const UserProvider = ({ children }) => {
+    const [user, setUser] = useState(readStoredUser);
+    const [isAuthChecking, setIsAuthChecking] = useState(false);
+    const [sessionExpired, setSessionExpired] = useState(false);
 
     const login = (userData) => {
         setUser(userData);
+        setSessionExpired(false);
         localStorage.setItem('user', JSON.stringify(userData));
     };
 
     const updateUser = async (partialUser) => {
         const nextUser = { ...(user || {}), ...(partialUser || {}) };
         setUser(nextUser);
-        localStorage.setItem("user", JSON.stringify(nextUser));
+        localStorage.setItem('user', JSON.stringify(nextUser));
         try {
             await updateUserFirstNameLastName(nextUser);
         } catch (err) {
@@ -44,7 +44,18 @@ export const UserProvider = ({ children }) => {
     };
 
     return (
-        <UserContext.Provider value={{ user, login, logout, updateUser }}>
+        <UserContext.Provider
+            value={{
+                user,
+                login,
+                logout,
+                updateUser,
+                isAuthChecking,
+                setIsAuthChecking,
+                sessionExpired,
+                setSessionExpired
+            }}
+        >
             {children}
         </UserContext.Provider>
     );

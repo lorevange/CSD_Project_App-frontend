@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
-import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Home from "./pages/Home";
@@ -10,48 +10,25 @@ import Register from "./pages/Register";
 import Profile from "./pages/Profile";
 import BottomNav from "./components/BottomNav";
 import OfflinePage from "./components/OfflinePage";
+import AuthBootstrap from './components/AuthBootstrap';
 import { UserContext } from './context/UserContext';
-import { fetchCurrentUser } from './api/token';
-
-const AuthBootstrap = () => {
-  const { user, login, logout } = useContext(UserContext);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    let isMounted = true;
-    const token = localStorage.getItem('token');
-
-    if (!token) {
-      return;
-    }
-
-    const validateToken = async () => {
-      try {
-        const me = await fetchCurrentUser();
-        if (me && !user) {
-          login(me);
-        }
-      } catch (error) {
-        if (!isMounted) {
-          return;
-        }
-        logout();
-        navigate('/');
-      }
-    };
-
-    validateToken();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [login, logout, navigate, user]);
-
-  return null;
-};
+import Spinner from './components/Spinner';
 
 function App() {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const { sessionExpired, setSessionExpired } = useContext(UserContext);
+
+  useEffect(() => {
+    if (!sessionExpired) {
+      return undefined;
+    }
+
+    const timer = setTimeout(() => {
+      setSessionExpired(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, [sessionExpired, setSessionExpired]);
 
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
@@ -73,6 +50,10 @@ function App() {
   return (
     <BrowserRouter>
       <AuthBootstrap />
+      <Spinner
+        show={sessionExpired}
+        message="Your session has expired. Please sign in again."
+      />
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="light" />
       <Routes>
         <Route path="/" element={<Home />} />

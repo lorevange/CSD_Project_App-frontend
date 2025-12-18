@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FaBars, FaTimes, FaUserMd, FaUser, FaSun, FaMoon } from 'react-icons/fa';
 import { useTheme } from '../context/ThemeContext';
 import { UserContext } from '../context/UserContext';
+import Spinner from './Spinner';
 import '../styles/Header.css';
 
 const Header = () => {
@@ -11,7 +12,7 @@ const Header = () => {
     const [isLoggingOut, setIsLoggingOut] = useState(false);
     const { t, i18n } = useTranslation();
     const { theme, toggleTheme } = useTheme();
-    const { user, logout } = useContext(UserContext);
+    const { user, logout, isAuthChecking } = useContext(UserContext);
     const navigate = useNavigate();
     const logoutTimerRef = useRef(null);
 
@@ -27,7 +28,7 @@ const Header = () => {
             logout();
             navigate('/');
             setIsLoggingOut(false);
-        }, 1000);
+        },2000);
     };
 
     useEffect(() => {
@@ -59,26 +60,30 @@ const Header = () => {
                                 </Link>
                             </li>
 
-                            {user ? (
-                                <>
-                                    <li className="nav-item">
-                                        <Link to="/profile" className="nav-link header-user" onClick={toggleMenu}>
-                                            {user.first_name} {user.last_name}
-                                        </Link>
-                                    </li>
-                                    <li className="nav-item">
-                                        <button className="btn-logout" onClick={handleLogout} disabled={isLoggingOut}>
-                                            {t('nav.logout', 'Logout')}
-                                        </button>
-                                    </li>
-                                </>
-                            ) : (
-                                <>
-                                    <li className="nav-item">
-                                        <Link to="/login" className="nav-link btn-login" onClick={toggleMenu}>
-                                            <FaUser className="icon" /> {t('nav.login')}
-                                        </Link>
-                                    </li>
+                        {user ? (
+                            <>
+                                <li className="nav-item">
+                                    <Link to="/profile" className="nav-link header-user" onClick={toggleMenu}>
+                                        {user.first_name} {user.last_name}
+                                    </Link>
+                                </li>
+                                <li className="nav-item">
+                                    <button className="btn-logout" onClick={handleLogout} disabled={isLoggingOut}>
+                                        {t('nav.logout', 'Logout')}
+                                    </button>
+                                </li>
+                            </>
+                        ) : isAuthChecking ? (
+                            <li className="nav-item">
+                                <div className="auth-loading-chip" aria-label="Checking your session" />
+                            </li>
+                        ) : (
+                            <>
+                                <li className="nav-item">
+                                    <Link to="/login" className="nav-link btn-login" onClick={toggleMenu}>
+                                        <FaUser className="icon" /> {t('nav.login')}
+                                    </Link>
+                                </li>
                                     <li className="nav-item">
                                         <Link to="/register?type=doctor" className="nav-link btn-doctor" onClick={toggleMenu}>
                                             {t('nav.doctor')}
@@ -112,16 +117,10 @@ const Header = () => {
                     </nav>
                 </div>
             </header>
-            {isLoggingOut && (
-                <div className="logout-overlay" role="status" aria-live="polite">
-                    <div className="logout-card">
-                        <div className="logout-spinner" />
-                        <p className="logout-message">
-                            You are being logged out. Sign in again to continue booking appointments.
-                        </p>
-                    </div>
-                </div>
-            )}
+            <Spinner
+                show={isLoggingOut}
+                message="You are being logged out..."
+            />
         </>
     );
 };
