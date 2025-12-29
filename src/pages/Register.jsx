@@ -26,7 +26,6 @@ const Register = () => {
         password: '',
         confirm_password: '',
         specialization: '',
-        specialization: '',
         city: '',
         address: '',
         latitude: null,
