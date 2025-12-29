@@ -8,6 +8,7 @@ import DoctorCard from '../components/DoctorCard';
 import SkeletonCard from '../components/SkeletonCard';
 import { doctors } from '../data/mockData';
 import Map from '../components/Map';
+import { searchDoctors } from '../api/doctors';
 import '../styles/SearchResults.css';
 
 const SearchResults = () => {
@@ -19,42 +20,48 @@ const SearchResults = () => {
 
     const [filteredDoctors, setFilteredDoctors] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
-        setIsLoading(true);
-        // Simulate network delay
-        const timer = setTimeout(() => {
-            const results = doctors.filter(doctor => {
-                const queryLower = initialQuery.toLowerCase();
-                const cityLower = initialCity.toLowerCase();
+        const fetchDoctors = async () => {
+            setIsLoading(true);
+            setError(null);
+            try {
+                const results = await searchDoctors(initialQuery, initialCity);
 
-                // Check name
-                const matchName = doctor.name.toLowerCase().includes(queryLower);
+                // Adapt API response to match frontend DoctorCard expectations
+                // Backend returns: { first_name, last_name, specialization, city, address, latitude, longitude, ... }
+                // Frontend expects: { id, name, specialization: {it, en}, services: {it, en}, rating, reviewsCount, image, ... }
+                const adaptedResults = results.map(doc => ({
+                    id: doc.identity_number,
+                    name: `${doc.first_name} ${doc.last_name}`,
+                    specialization: {
+                        it: doc.specialization,
+                        en: doc.specialization // Fallback as backend is single language
+                    },
+                    city: doc.city,
+                    address: doc.address,
+                    latitude: doc.latitude,
+                    longitude: doc.longitude,
+                    // Mock/Placeholder for missing backend fields
+                    rating: 0,
+                    reviewsCount: 0,
+                    image: "https://via.placeholder.com/150",
+                    services: { it: ["Servizio Base"], en: ["Base Service"] },
+                    price: 0,
+                    reviews: []
+                }));
 
-                // Check specialization in both languages
-                const matchSpec =
-                    doctor.specialization.it.toLowerCase().includes(queryLower) ||
-                    doctor.specialization.en.toLowerCase().includes(queryLower);
+                setFilteredDoctors(adaptedResults);
+            } catch (err) {
+                console.error("Error fetching doctors:", err);
+                setError(t('search_results.error', 'Error loading results'));
+            } finally {
+                setIsLoading(false);
+            }
+        };
 
-                // Check services in both languages
-                const matchServices =
-                    doctor.services.it.some(s => s.toLowerCase().includes(queryLower)) ||
-                    doctor.services.en.some(s => s.toLowerCase().includes(queryLower));
-
-                // Check city in query as well, in case user typed city in main box
-                const matchCityInQuery = doctor.city.toLowerCase().includes(queryLower);
-
-                const matchQuery = matchName || matchSpec || matchServices || matchCityInQuery;
-
-                const matchCity = doctor.city.toLowerCase().includes(cityLower);
-
-                return matchQuery && matchCity;
-            });
-            setFilteredDoctors(results);
-            setIsLoading(false);
-        }, 2000); // 2 second delay
-
-        return () => clearTimeout(timer);
+        fetchDoctors();
     }, [initialQuery, initialCity]);
 
     return (
