@@ -7,6 +7,7 @@ import '../styles/Auth.css';
 
 import { specializations } from '../data/mockData'; // Import specializations
 import { registerUser } from '../api/registration';
+import AddressAutocomplete from '../components/AddressAutocomplete';
 
 const Register = () => {
     const { t, i18n } = useTranslation(); // Add i18n
@@ -25,7 +26,11 @@ const Register = () => {
         password: '',
         confirm_password: '',
         specialization: '',
-        city: ''
+        specialization: '',
+        city: '',
+        address: '',
+        latitude: null,
+        longitude: null
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [passwordError, setPasswordError] = useState(null);
@@ -39,6 +44,16 @@ const Register = () => {
         if (name === 'password' || name === 'confirm_password') {
             setPasswordError(validatePassword(nextData));
         }
+    };
+
+    const handleAddressSelect = (addressData) => {
+        setFormData(prev => ({
+            ...prev,
+            address: addressData.address,
+            city: addressData.city,
+            latitude: addressData.lat,
+            longitude: addressData.lng
+        }));
     };
 
     const validatePassword = (data = formData) => {
@@ -210,6 +225,11 @@ const Register = () => {
                                         ))}
                                     </select>
                                 </div>
+
+                                <div className="form-group">
+                                    <label>{t('auth.address', 'Address')}</label>
+                                    <AddressAutocomplete onAddressSelect={handleAddressSelect} />
+                                </div>
                                 <div className="form-group">
                                     <label>{t('auth.city')}</label>
                                     <input
@@ -218,6 +238,7 @@ const Register = () => {
                                         value={formData.city}
                                         onChange={handleChange}
                                         required
+                                        readOnly
                                     />
                                 </div>
                             </>
@@ -233,7 +254,7 @@ const Register = () => {
                 </div>
             </div>
             <Footer />
-        </div>
+        </div >
     );
 };
 
