@@ -6,7 +6,7 @@ const containerStyle = {
     height: '100%'
 };
 
-const Map = ({ center, zoom = 15 }) => {
+const Map = ({ center, zoom = 15, markers = [] }) => {
     const { isLoaded } = useJsApiLoader({
         id: 'google-map-script',
         googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY
@@ -38,7 +38,9 @@ const Map = ({ center, zoom = 15 }) => {
                 mapTypeControl: false
             }}
         >
-            <Marker position={center} />
+            {markers.map((marker, index) => (
+                <Marker key={index} position={marker} />
+            ))}
         </GoogleMap>
     );
 };
