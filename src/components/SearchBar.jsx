@@ -33,7 +33,7 @@ const SearchBar = ({ initialQuery = '', initialCity = '' }) => {
 
     const handleSearch = (e) => {
         e.preventDefault();
-        navigate(`/search?query=${query}&city=${city}`);
+        navigate(`/doctors/search?query=${query}&city=${city}`);
     };
 
     return (

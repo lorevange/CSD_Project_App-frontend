@@ -8,6 +8,7 @@ import ReviewsList from '../components/ReviewsList';
 import { doctors } from '../data/mockData';
 import { FaStar, FaMapMarkerAlt, FaStethoscope, FaCheckCircle } from 'react-icons/fa';
 import '../styles/DoctorProfile.css';
+import Map from '../components/Map';
 
 const DoctorProfile = () => {
     const { id } = useParams();
@@ -69,8 +70,13 @@ const DoctorProfile = () => {
                             <p className="profile-address">
                                 <FaMapMarkerAlt className="icon" /> {doctor.address}, {doctor.city}
                             </p>
-                            {/* Placeholder for map */}
-                            <div className="map-placeholder">{t('doctor_profile.map_placeholder')}</div>
+                            <div className="map-placeholder" style={{ height: '300px', width: '100%', borderRadius: '8px', overflow: 'hidden' }}>
+                                {doctor.latitude && doctor.longitude ? (
+                                    <Map center={{ lat: doctor.latitude, lng: doctor.longitude }} markers={[{ lat: doctor.latitude, lng: doctor.longitude }]} />
+                                ) : (
+                                    <div>{t('doctor_profile.map_placeholder')}</div>
+                                )}
+                            </div>
                         </section>
 
                         <ReviewsList

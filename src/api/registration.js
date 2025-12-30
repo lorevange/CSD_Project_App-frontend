@@ -11,14 +11,19 @@ const buildRegistrationPayload = (userType, data) => {
     }
     switch (userType) {
         case 'doctor':
-            return { ...payload,
+            return {
+                ...payload,
                 license_number: data.license_number,
                 specialization: data.specialization,
                 city: data.city,
+                address: data.address,
+                latitude: data.latitude,
+                longitude: data.longitude,
                 profile: 'doctor'
             };
         case 'patient':
-            return { ...payload,
+            return {
+                ...payload,
                 profile: 'patient'
             };
         default:

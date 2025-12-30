@@ -57,7 +57,7 @@ function App() {
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="light" />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/search" element={<SearchResults />} />
+        <Route path="/doctors/search" element={<SearchResults />} />
         <Route path="/doctor/:id" element={<DoctorProfile />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -68,6 +68,6 @@ function App() {
   );
 }
 
- 
+
 
 export default App;

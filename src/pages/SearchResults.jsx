@@ -7,6 +7,8 @@ import SearchBar from '../components/SearchBar';
 import DoctorCard from '../components/DoctorCard';
 import SkeletonCard from '../components/SkeletonCard';
 import { doctors } from '../data/mockData';
+import Map from '../components/Map';
+import { searchDoctors } from '../api/doctors';
 import '../styles/SearchResults.css';
 
 const SearchResults = () => {
@@ -18,43 +20,56 @@ const SearchResults = () => {
 
     const [filteredDoctors, setFilteredDoctors] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [highlightedId, setHighlightedId] = useState(null);
 
     useEffect(() => {
-        setIsLoading(true);
-        // Simulate network delay
-        const timer = setTimeout(() => {
-            const results = doctors.filter(doctor => {
-                const queryLower = initialQuery.toLowerCase();
-                const cityLower = initialCity.toLowerCase();
+        const fetchDoctors = async () => {
+            setIsLoading(true);
+            setError(null);
+            try {
+                const results = await searchDoctors(initialQuery, initialCity);
 
-                // Check name
-                const matchName = doctor.name.toLowerCase().includes(queryLower);
+                // Adapt API response to match frontend DoctorCard expectations
+                // Backend returns: { first_name, last_name, specialization, city, address, latitude, longitude, ... }
+                // Frontend expects: { id, name, specialization: {it, en}, services: {it, en}, rating, reviewsCount, image, ... }
+                const adaptedResults = results.map(doc => ({
+                    id: doc.identity_number,
+                    name: `${doc.first_name} ${doc.last_name}`,
+                    specialization: {
+                        it: doc.specialization,
+                        en: doc.specialization // Fallback as backend is single language
+                    },
+                    city: doc.city,
+                    address: doc.address,
+                    latitude: doc.latitude,
+                    longitude: doc.longitude,
+                    // Mock/Placeholder for missing backend fields
+                    rating: 0,
+                    reviewsCount: 0,
+                    image: "https://via.placeholder.com/150",
+                    services: { it: ["Servizio Base"], en: ["Base Service"] },
+                    price: 0,
+                    reviews: []
+                }));
 
-                // Check specialization in both languages
-                const matchSpec =
-                    doctor.specialization.it.toLowerCase().includes(queryLower) ||
-                    doctor.specialization.en.toLowerCase().includes(queryLower);
+                setFilteredDoctors(adaptedResults);
+            } catch (err) {
+                console.error("Error fetching doctors:", err);
+                setError(t('search_results.error', 'Error loading results'));
+            } finally {
+                setIsLoading(false);
+            }
+        };
 
-                // Check services in both languages
-                const matchServices =
-                    doctor.services.it.some(s => s.toLowerCase().includes(queryLower)) ||
-                    doctor.services.en.some(s => s.toLowerCase().includes(queryLower));
-
-                // Check city in query as well, in case user typed city in main box
-                const matchCityInQuery = doctor.city.toLowerCase().includes(queryLower);
-
-                const matchQuery = matchName || matchSpec || matchServices || matchCityInQuery;
-
-                const matchCity = doctor.city.toLowerCase().includes(cityLower);
-
-                return matchQuery && matchCity;
-            });
-            setFilteredDoctors(results);
-            setIsLoading(false);
-        }, 2000); // 2 second delay
-
-        return () => clearTimeout(timer);
+        fetchDoctors();
     }, [initialQuery, initialCity]);
+
+    const handleMarkerClick = (id) => {
+        setHighlightedId(id);
+        // Optional: clear highlight after a delay
+        setTimeout(() => setHighlightedId(null), 3000);
+    };
 
     return (
         <div className="search-results-page">
@@ -77,20 +92,46 @@ const SearchResults = () => {
                     )}
                 </h2>
 
-                <div className="results-list">
-                    {isLoading ? (
-                        // Render 3 skeleton cards while loading
-                        [...Array(3)].map((_, index) => <SkeletonCard key={index} />)
-                    ) : filteredDoctors.length > 0 ? (
-                        filteredDoctors.map(doctor => (
-                            <DoctorCard key={doctor.id} doctor={doctor} />
-                        ))
-                    ) : (
-                        <div className="no-results">
-                            <p>{t('search_results.no_results')}</p>
-                            <p>{t('search_results.try_modifying')}</p>
+                <div className="search-content">
+                    <div className="results-column">
+                        <div className="results-list">
+                            {isLoading ? (
+                                // Render 3 skeleton cards while loading
+                                [...Array(3)].map((_, index) => <SkeletonCard key={index} />)
+                            ) : filteredDoctors.length > 0 ? (
+                                filteredDoctors.map(doctor => (
+                                    <DoctorCard
+                                        key={doctor.id}
+                                        doctor={doctor}
+                                        isHighlighted={doctor.id === highlightedId}
+                                    />
+                                ))
+                            ) : (
+                                <div className="no-results">
+                                    <p>{t('search_results.no_results')}</p>
+                                    <p>{t('search_results.try_modifying')}</p>
+                                </div>
+                            )}
                         </div>
-                    )}
+                    </div>
+                    <div className="map-column">
+                        {!isLoading && filteredDoctors.length > 0 && (
+                            <Map
+                                center={filteredDoctors[0]?.latitude ? { lat: filteredDoctors[0].latitude, lng: filteredDoctors[0].longitude } : { lat: 41.9028, lng: 12.4964 }}
+                                markers={filteredDoctors.filter(d => d.latitude && d.longitude).map(d => ({ lat: d.latitude, lng: d.longitude, id: d.id }))}
+                                zoom={12}
+                                onMarkerClick={handleMarkerClick}
+                            />
+                        )}
+                        {!isLoading && filteredDoctors.length === 0 && (
+                            <Map center={{ lat: 41.9028, lng: 12.4964 }} zoom={10} />
+                        )}
+                        {isLoading && (
+                            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#eee' }}>
+                                Loading Map...
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
             <Footer />
