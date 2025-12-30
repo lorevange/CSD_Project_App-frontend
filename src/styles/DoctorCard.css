@@ -15,6 +15,14 @@
     border-color: var(--color-primary-light);
 }
 
+.doctor-card.highlighted {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px var(--color-primary-light), var(--shadow-lg);
+    transform: translateY(-3px);
+    background-color: var(--bg-highlight);
+    /* Assicurati che esista o usa un colore esplicito */
+}
+
 .doctor-image-container {
     flex-shrink: 0;
     margin-right: var(--spacing-lg);

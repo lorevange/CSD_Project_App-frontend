@@ -21,6 +21,7 @@ const SearchResults = () => {
     const [filteredDoctors, setFilteredDoctors] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [highlightedId, setHighlightedId] = useState(null);
 
     useEffect(() => {
         const fetchDoctors = async () => {
@@ -64,6 +65,12 @@ const SearchResults = () => {
         fetchDoctors();
     }, [initialQuery, initialCity]);
 
+    const handleMarkerClick = (id) => {
+        setHighlightedId(id);
+        // Optional: clear highlight after a delay
+        setTimeout(() => setHighlightedId(null), 3000);
+    };
+
     return (
         <div className="search-results-page">
             <Header />
@@ -93,7 +100,11 @@ const SearchResults = () => {
                                 [...Array(3)].map((_, index) => <SkeletonCard key={index} />)
                             ) : filteredDoctors.length > 0 ? (
                                 filteredDoctors.map(doctor => (
-                                    <DoctorCard key={doctor.id} doctor={doctor} />
+                                    <DoctorCard
+                                        key={doctor.id}
+                                        doctor={doctor}
+                                        isHighlighted={doctor.id === highlightedId}
+                                    />
                                 ))
                             ) : (
                                 <div className="no-results">
@@ -107,8 +118,9 @@ const SearchResults = () => {
                         {!isLoading && filteredDoctors.length > 0 && (
                             <Map
                                 center={filteredDoctors[0]?.latitude ? { lat: filteredDoctors[0].latitude, lng: filteredDoctors[0].longitude } : { lat: 41.9028, lng: 12.4964 }}
-                                markers={filteredDoctors.filter(d => d.latitude && d.longitude).map(d => ({ lat: d.latitude, lng: d.longitude }))}
+                                markers={filteredDoctors.filter(d => d.latitude && d.longitude).map(d => ({ lat: d.latitude, lng: d.longitude, id: d.id }))}
                                 zoom={12}
+                                onMarkerClick={handleMarkerClick}
                             />
                         )}
                         {!isLoading && filteredDoctors.length === 0 && (

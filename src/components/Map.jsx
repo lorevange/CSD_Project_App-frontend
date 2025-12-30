@@ -8,7 +8,7 @@ const containerStyle = {
 
 const libraries = ['places'];
 
-const Map = ({ center, zoom = 15, markers = [] }) => {
+const Map = ({ center, zoom = 15, markers = [], onMarkerClick }) => {
     const { isLoaded } = useJsApiLoader({
         id: 'google-map-script',
         googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
@@ -42,7 +42,11 @@ const Map = ({ center, zoom = 15, markers = [] }) => {
             }}
         >
             {markers.map((marker, index) => (
-                <Marker key={index} position={marker} />
+                <Marker
+                    key={index}
+                    position={marker}
+                    onClick={() => onMarkerClick && onMarkerClick(marker.id)}
+                />
             ))}
         </GoogleMap>
     );

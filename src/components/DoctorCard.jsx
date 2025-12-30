@@ -1,13 +1,21 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FaStar, FaMapMarkerAlt, FaStethoscope } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import '../styles/DoctorCard.css';
 
-const DoctorCard = ({ doctor }) => {
+const DoctorCard = ({ doctor, isHighlighted }) => {
     const { t, i18n } = useTranslation();
+    const cardRef = useRef(null);
+
+    useEffect(() => {
+        if (isHighlighted && cardRef.current) {
+            cardRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }, [isHighlighted]);
+
     return (
-        <div className="doctor-card">
+        <div className={`doctor-card ${isHighlighted ? 'highlighted' : ''}`} ref={cardRef}>
             <div className="doctor-image-container">
                 <img src={doctor.image} alt={doctor.name} className="doctor-image" />
             </div>
