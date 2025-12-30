@@ -19,6 +19,7 @@ export async function apiRequest(path, options = {}) {
 
     const response = await fetch(url, { ...options, headers });
     const contentType = response.headers.get('content-type') || '';
+    const unauthorizedEventName = 'auth:unauthorized';
 
     let data;
     if (contentType.includes('application/json')) {
@@ -36,6 +37,10 @@ export async function apiRequest(path, options = {}) {
     }
 
     if (!response.ok) {
+        if (response.status === 401 && token) {
+            // Let the app react to expired/invalid tokens in a central place
+            window.dispatchEvent(new CustomEvent(unauthorizedEventName));
+        }
         const detail = data?.detail;
         const detailMessage = Array.isArray(detail)
             ? detail.map((d) => d.msg || JSON.stringify(d)).join('; ')

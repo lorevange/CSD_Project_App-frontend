@@ -1,29 +1,42 @@
 import { useEffect, useContext, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
 import { fetchCurrentUser } from '../api/token';
 
 const AuthBootstrap = () => {
     const { user, login, logout, setIsAuthChecking, setSessionExpired } = useContext(UserContext);
     const navigate = useNavigate();
-    const lastValidatedTokenRef = useRef(null);
+    const location = useLocation();
+    const lastValidationKeyRef = useRef(null);
     const inFlightRef = useRef(false);
+
+    useEffect(() => {
+        const handleUnauthorized = () => {
+            setSessionExpired(true);
+            logout();
+            navigate('/');
+        };
+
+        window.addEventListener('auth:unauthorized', handleUnauthorized);
+        return () => window.removeEventListener('auth:unauthorized', handleUnauthorized);
+    }, [logout, navigate, setSessionExpired]);
 
     useEffect(() => {
         let isMounted = true;
         const token = localStorage.getItem('token');
+        const validationKey = token ? `${token}-${location.key}` : null;
 
         if (!token) {
             setIsAuthChecking(false);
-            lastValidatedTokenRef.current = null;
+            lastValidationKeyRef.current = null;
             return;
         }
 
-        if (inFlightRef.current || lastValidatedTokenRef.current === token) {
+        if (inFlightRef.current || lastValidationKeyRef.current === validationKey) {
             return;
         }
 
-        lastValidatedTokenRef.current = token;
+        lastValidationKeyRef.current = validationKey;
 
         const validateToken = async () => {
             inFlightRef.current = true;
@@ -53,7 +66,7 @@ const AuthBootstrap = () => {
         return () => {
             isMounted = false;
         };
-    }, [login, logout, navigate, setIsAuthChecking, user]);
+    }, [location.key, login, logout, navigate, setIsAuthChecking, setSessionExpired, user]);
 
     return null;
 };
