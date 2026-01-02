@@ -6,7 +6,6 @@ import Footer from '../components/Footer';
 import SearchBar from '../components/SearchBar';
 import DoctorCard from '../components/DoctorCard';
 import SkeletonCard from '../components/SkeletonCard';
-import { doctors } from '../data/mockData';
 import Map from '../components/Map';
 import { searchDoctors } from '../api/doctors';
 import '../styles/SearchResults.css';
@@ -34,7 +33,7 @@ const SearchResults = () => {
                 // Backend returns: { first_name, last_name, specialization, city, address, latitude, longitude, ... }
                 // Frontend expects: { id, name, specialization: {it, en}, services: {it, en}, rating, reviewsCount, image, ... }
                 const adaptedResults = results.map(doc => ({
-                    id: doc.identity_number,
+                    id: doc.id,
                     name: `${doc.first_name} ${doc.last_name}`,
                     specialization: {
                         it: doc.specialization,
