@@ -9,3 +9,9 @@ export async function searchDoctors(query, city) {
         method: 'GET',
     });
 }
+
+export async function getDoctorById(doctorId) {
+    return apiRequest(`/doctors/${doctorId}`, {
+        method: 'GET',
+    });
+}
