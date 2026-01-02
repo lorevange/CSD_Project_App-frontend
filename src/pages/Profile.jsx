@@ -6,6 +6,7 @@ import Footer from '../components/Footer';
 import { UserContext } from '../context/UserContext';
 import '../styles/Profile.css';
 import { normalizePhotoToDataUrl } from '../utils/photo';
+import { createDoctorService } from '../api/doctorServices';
 
 const Profile = () => {
     const { t } = useTranslation();
@@ -18,6 +19,11 @@ const Profile = () => {
     const [photoData, setPhotoData] = useState(user?.photo || null);
     const [statusMessage, setStatusMessage] = useState('');
     const fileInputRef = useRef(null);
+    const [serviceName, setServiceName] = useState('');
+    const [servicePrice, setServicePrice] = useState('');
+    const [serviceSaving, setServiceSaving] = useState(false);
+    const [serviceError, setServiceError] = useState(null);
+    const [serviceSuccess, setServiceSuccess] = useState(false);
 
     useEffect(() => {
         if (user) {
@@ -87,6 +93,32 @@ const Profile = () => {
 
     const handleResetPassword = () => {
         setStatusMessage(t('profile.reset_placeholder', 'Password reset will be available soon.'));
+    };
+
+    const handleServiceSave = async (e) => {
+        e.preventDefault();
+        setServiceError(null);
+        setServiceSuccess(false);
+        setServiceSaving(true);
+        try {
+            const parsedPrice = Math.round(Number(servicePrice));
+            if (!Number.isFinite(parsedPrice)) {
+                throw new Error(t('profile.invalid_price', 'Please enter a valid price'));
+            }
+            const doctorId = Number(user?.id);
+            if (!Number.isFinite(doctorId)) {
+                throw new Error(t('profile.missing_doctor_id', 'Doctor id not found'));
+            }
+            await createDoctorService({ name: serviceName, price: parsedPrice, doctorId });
+            setServiceSuccess(true);
+            setServiceName('');
+            setServicePrice('');
+        } catch (err) {
+            console.error('Failed to create doctor service', err);
+            setServiceError(err.message || t('profile.service_save_error', 'Unable to save service'));
+        } finally {
+            setServiceSaving(false);
+        }
     };
 
     return (
@@ -168,6 +200,48 @@ const Profile = () => {
                             </div>
                         </form>
                     </div>
+
+                    {user?.profile === 'doctor' && (
+                        <div className="panel">
+                            <div className="panel-header">
+                                <div>
+                                    <p className="eyebrow">{t('profile.doctor_services', 'Examination types')}</p>
+                                    <h3>{t('profile.add_service_title', 'Add a service')}</h3>
+                                </div>
+                            </div>
+                            <form className="profile-form" onSubmit={handleServiceSave}>
+                                <div className="form-grid">
+                                    <div className="form-row">
+                                        <label>{t('profile.service_name', 'Name')}</label>
+                                        <input
+                                            type="text"
+                                            value={serviceName}
+                                            onChange={(e) => setServiceName(e.target.value)}
+                                            required
+                                        />
+                                    </div>
+                                    <div className="form-row">
+                                        <label>{t('profile.service_price', 'Price (€)')}</label>
+                                        <input
+                                            type="number"
+                                            step="0.01"
+                                            min="0"
+                                            value={servicePrice}
+                                            onChange={(e) => setServicePrice(e.target.value)}
+                                            required
+                                        />
+                                    </div>
+                                </div>
+                                {serviceError && <div className="auth-error">{serviceError}</div>}
+                                {serviceSuccess && <div className="profile-status">{t('profile.service_saved', 'Service saved')}</div>}
+                                <div className="profile-actions">
+                                    <button type="submit" className="profile-btn primary" disabled={serviceSaving}>
+                                        {serviceSaving ? t('profile.saving', 'Saving...') : t('profile.save_service', 'Save service')}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    )}
 
                     {statusMessage && <div className="profile-status">{statusMessage}</div>}
                 </div>
