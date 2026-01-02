@@ -16,3 +16,15 @@ export async function getAppointments({ doctorId, userId, startFrom, startTo, st
         method: 'GET',
     });
 }
+
+export async function createAppointment({ doctorId, userId, doctorServiceId, startDatetime }) {
+    return apiRequest('/appointments/', {
+        method: 'POST',
+        body: JSON.stringify({
+            doctor_id: doctorId,
+            user_id: userId,
+            doctor_service_id: doctorServiceId,
+            start_datetime: startDatetime,
+        }),
+    });
+}

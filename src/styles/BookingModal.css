@@ -223,6 +223,42 @@
     cursor: not-allowed;
 }
 
+.service-selection {
+    margin-bottom: var(--spacing-lg);
+}
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: var(--spacing-sm);
+}
+
+.service-option {
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-sm);
+    background: var(--bg-main);
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.service-option .service-name {
+    font-weight: 600;
+    color: var(--text-main);
+    margin-bottom: 4px;
+}
+
+.service-option .service-price {
+    color: var(--color-primary);
+    font-weight: 500;
+}
+
+.service-option.selected {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+}
+
 /* Success State */
 .success-state {
     text-align: center;

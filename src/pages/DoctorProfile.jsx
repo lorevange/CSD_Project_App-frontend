@@ -38,17 +38,46 @@ const DoctorProfile = () => {
             };
         };
 
+        const normalizeServiceList = (list) => {
+            if (!Array.isArray(list)) return [];
+            return list.map((item) => {
+                if (item && typeof item === 'object') {
+                    return String(item.name ?? item.label ?? item.title ?? '');
+                }
+                return String(item ?? '');
+            }).filter(Boolean);
+        };
+
+        const normalizeServiceOptions = (list) => {
+            if (!Array.isArray(list)) return [];
+            return list.map((item) => ({
+                name: item?.name ?? item?.label ?? item?.title ?? String(item ?? ''),
+                price: Number.isFinite(Number(item?.price)) ? Number(item.price) : 0,
+                id: item?.id,
+                doctorId: item?.doctor_id,
+                isActive: item?.is_active,
+            })).filter((opt) => Boolean(opt.name));
+        };
+
         const servicesFromApi = data?.services;
         let localizedServices;
+        let serviceOptions = [];
         if (Array.isArray(servicesFromApi)) {
-            localizedServices = { it: servicesFromApi, en: servicesFromApi };
+            const normalized = normalizeServiceList(servicesFromApi);
+            serviceOptions = normalizeServiceOptions(servicesFromApi);
+            localizedServices = { it: normalized, en: normalized };
         } else if (servicesFromApi && typeof servicesFromApi === 'object') {
+            const source = servicesFromApi.it || servicesFromApi.en || servicesFromApi;
+            const itServices = normalizeServiceList(source);
+            const enServices = normalizeServiceList(servicesFromApi.en || servicesFromApi.it || servicesFromApi);
+            serviceOptions = normalizeServiceOptions(source);
             localizedServices = {
-                it: servicesFromApi.it || servicesFromApi.en || [],
-                en: servicesFromApi.en || servicesFromApi.it || [],
+                it: itServices,
+                en: enServices,
             };
         } else {
             localizedServices = { it: [], en: [] };
+            serviceOptions = [];
         }
 
         const specialization = buildLocalizedText(
@@ -80,6 +109,7 @@ const DoctorProfile = () => {
             reviewsCount: data.reviewsCount ?? data.reviews_count ?? 0,
             image: resolvedPhoto,
             services: localizedServices,
+            serviceOptions,
             bio,
             price: data.price != null ? toNumberOr(data.price, 0) : 0,
             reviews: data.reviews || [],
@@ -104,33 +134,33 @@ const DoctorProfile = () => {
         fetchDoctor();
     }, [id, adaptDoctorData, t]);
 
-    useEffect(() => {
-        const fetchAppointments = async () => {
-            setIsAppointmentsLoading(true);
-            setAppointmentsError(null);
-            try {
-                const data = await getAppointments({ doctorId: id, status: 'scheduled' });
-                const normalized = Array.isArray(data) ? data.map((appt) => ({
-                    id: appt.id,
-                    doctorId: appt.doctor_id,
-                    userId: appt.user_id,
-                    startDatetime: appt.start_datetime,
-                    endDatetime: appt.end_datetime,
-                    examinationType: appt.examination_type,
-                    notes: appt.notes,
-                    status: appt.status,
-                })) : [];
-                setAppointments(normalized);
-            } catch (err) {
-                console.error('Error fetching appointments:', err);
-                setAppointmentsError(err.message || t('appointments.load_error', 'Unable to load appointments'));
-            } finally {
-                setIsAppointmentsLoading(false);
-            }
-        };
-
-        fetchAppointments();
+    const fetchAppointments = useCallback(async () => {
+        setIsAppointmentsLoading(true);
+        setAppointmentsError(null);
+        try {
+            const data = await getAppointments({ doctorId: id, status: 'scheduled' });
+            const normalized = Array.isArray(data) ? data.map((appt) => ({
+                id: appt.id,
+                doctorId: appt.doctor_id,
+                userId: appt.user_id,
+                startDatetime: appt.start_datetime,
+                endDatetime: appt.end_datetime,
+                examinationType: appt.examination_type,
+                notes: appt.notes,
+                status: appt.status,
+            })) : [];
+            setAppointments(normalized);
+        } catch (err) {
+            console.error('Error fetching appointments:', err);
+            setAppointmentsError(err.message || t('appointments.load_error', 'Unable to load appointments'));
+        } finally {
+            setIsAppointmentsLoading(false);
+        }
     }, [id, t]);
+
+    useEffect(() => {
+        fetchAppointments();
+    }, [fetchAppointments]);
 
     const doctorAppointments = useMemo(() => {
         const docId = Number(doctor?.id);
@@ -232,10 +262,6 @@ const DoctorProfile = () => {
                     <div className="profile-right">
                         <div className="booking-card">
                             <h3>{t('booking.title')}</h3>
-                            <div className="price-info">
-                                <span>{t('doctor_profile.first_visit')}</span>
-                                <span className="price">€{doctor.price}</span>
-                            </div>
                             <button className="book-btn-lg" onClick={() => setIsModalOpen(true)}>{t('booking.book_now')}</button>
                             <p className="booking-note">{t('booking.no_prepayment')}</p>
                             {isAppointmentsLoading && (
@@ -258,7 +284,10 @@ const DoctorProfile = () => {
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 doctorName={doctor.name}
+                doctorId={doctor.id}
                 appointments={doctorAppointments}
+                services={doctor.serviceOptions}
+                onAppointmentBooked={fetchAppointments}
             />
 
             <Footer />

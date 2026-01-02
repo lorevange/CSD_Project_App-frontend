@@ -1,14 +1,19 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FaTimes, FaCalendarAlt, FaClock, FaCheckCircle, FaUser } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import '../styles/BookingModal.css';
+import { UserContext } from '../context/UserContext';
+import { createAppointment } from '../api/appointments';
 
-const BookingModal = ({ isOpen, onClose, doctorName, appointments = [] }) => {
+const BookingModal = ({ isOpen, onClose, doctorName, doctorId, appointments = [], services = [], onAppointmentBooked }) => {
     const { t, i18n } = useTranslation();
+    const { user } = useContext(UserContext);
     const [step, setStep] = useState(1);
     const [selectedDate, setSelectedDate] = useState(null);
     const [selectedTime, setSelectedTime] = useState(null);
+    const [selectedServiceId, setSelectedServiceId] = useState(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Generate next 7 days
     const getNextDays = () => {
@@ -70,15 +75,49 @@ const BookingModal = ({ isOpen, onClose, doctorName, appointments = [] }) => {
         setSelectedTime(time);
     };
 
-    const handleConfirm = () => {
-        setStep(2); // Move to success state
-        toast.success(t('booking.success_message'));
+    const handleServiceSelect = (serviceId) => {
+        setSelectedServiceId(serviceId);
+    };
+
+    const handleConfirm = async () => {
+        if (!selectedDate || !selectedTime || !selectedServiceId || !doctorId) return;
+
+        const buildStartDateTime = () => {
+            const base = new Date(selectedDate.fullDate);
+            const [hours, minutes] = selectedTime.split(':').map((v) => Number(v));
+            if (Number.isFinite(hours) && Number.isFinite(minutes)) {
+                base.setHours(hours, minutes, 0, 0);
+            }
+            return base.toISOString();
+        };
+
+        const payload = {
+            doctorId: Number(doctorId),
+            userId: Number(user?.id),
+            doctorServiceId: Number(selectedServiceId),
+            startDatetime: buildStartDateTime(),
+        };
+
+        setIsSubmitting(true);
+        try {
+            await createAppointment(payload);
+            setStep(2); // Move to success state
+            onAppointmentBooked?.();
+            toast.success(t('booking.success_message'));
+        } catch (err) {
+            console.error('Failed to create appointment', err);
+            toast.error(err.message || t('booking.error', 'Unable to book appointment'));
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     const resetAndClose = () => {
         setStep(1);
         setSelectedDate(null);
         setSelectedTime(null);
+        setSelectedServiceId(null);
+        setStep(1);
         onClose();
     };
 
@@ -136,12 +175,44 @@ const BookingModal = ({ isOpen, onClose, doctorName, appointments = [] }) => {
                                 )}
                             </div>
 
+                            <div className="service-selection">
+                                <span className="section-label">{t('booking.select_service', 'Select an examination')}</span>
+                                {services.length > 0 ? (
+                                    <div className="services-grid">
+                                        {services.map((service) => (
+                                            <button
+                                                key={service.id ?? service.name}
+                                                type="button"
+                                                className={`service-option ${selectedServiceId === service.id ? 'selected' : ''}`}
+                                                onClick={() => handleServiceSelect(service.id)}
+                                            >
+                                                <div className="service-name">{service.name}</div>
+                                                <div className="service-price">€{service.price ?? 0}</div>
+                                            </button>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <p className="booking-note">{t('booking.no_services', 'No services available')}</p>
+                                )}
+                            </div>
+
                             {selectedDate && selectedTime && (
                                 <div className="booking-summary">
                                     <div className="summary-item">
                                         <FaUser className="summary-icon" />
                                         <span>{doctorName}</span>
                                     </div>
+                                    {selectedServiceId && (
+                                        <div className="summary-item">
+                                            <FaCheckCircle className="summary-icon" />
+                                            <span>
+                                                {services.find((s) => s.id === selectedServiceId)?.name}
+                                                {services.find((s) => s.id === selectedServiceId)?.price != null
+                                                    ? ` - €${services.find((s) => s.id === selectedServiceId)?.price}`
+                                                    : ''}
+                                            </span>
+                                        </div>
+                                    )}
                                     <div className="summary-item">
                                         <FaCalendarAlt className="summary-icon" />
                                         <span>{selectedDate.day} {selectedDate.date}</span>
@@ -170,10 +241,10 @@ const BookingModal = ({ isOpen, onClose, doctorName, appointments = [] }) => {
                             </button>
                             <button
                                 className="btn-confirm"
-                                disabled={!selectedDate || !selectedTime}
+                                disabled={!selectedDate || !selectedTime || !selectedServiceId || isSubmitting}
                                 onClick={handleConfirm}
                             >
-                                {t('booking.confirm')}
+                                {isSubmitting ? t('booking.saving', 'Saving...') : t('booking.confirm')}
                             </button>
                         </>
                     ) : (
