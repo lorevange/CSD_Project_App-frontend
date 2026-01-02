@@ -49,7 +49,7 @@ const SearchResults = () => {
                     rating: 0,
                     reviewsCount: 0,
                     image: normalizePhotoToDataUrl(doc?.photo, 'image/png') || 'https://picsum.photos/200/300',
-                    services: { it: ["Servizio Base"], en: ["Base Service"] },
+                    services: doc.services,
                     price: 0,
                     reviews: []
                 }));

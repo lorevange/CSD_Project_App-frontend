@@ -26,6 +26,11 @@
     z-index: 1;
 }
 
+.profile-card textarea {
+    position: relative;
+    z-index: 2;
+}
+
 .profile-card::before {
     content: '';
     position: absolute;
@@ -209,6 +214,20 @@
     border-radius: var(--radius-md);
     background: var(--input-bg);
     font-size: 1rem;
+    box-sizing: border-box;
+}
+
+.form-row textarea {
+    padding: 12px;
+    border: 1px solid var(--input-border);
+    border-radius: var(--radius-md);
+    background: var(--input-bg);
+    font-size: 1rem;
+    box-sizing: border-box;
+    resize: vertical;
+    min-height: 120px;
+    position: relative;
+    z-index: 3;
 }
 
 .profile-actions {
@@ -216,6 +235,68 @@
     gap: var(--spacing-md);
     flex-wrap: wrap;
     margin-top: var(--spacing-sm);
+}
+
+.services-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+}
+
+.service-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-sm);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background: var(--input-bg);
+}
+
+.service-row.inactive {
+    opacity: 0.6;
+    background: #f4f4f4;
+}
+
+.service-name {
+    font-weight: 600;
+}
+
+.service-price {
+    color: var(--color-primary);
+    font-weight: 500;
+}
+
+.service-status.inactive {
+    display: inline-block;
+    margin-top: 4px;
+    padding: 2px 8px;
+    background: rgba(0, 0, 0, 0.05);
+    color: var(--text-light);
+    border-radius: var(--radius-full);
+    font-size: 0.85rem;
+}
+
+.service-row .profile-btn {
+    min-width: 120px;
+    text-align: center;
+}
+
+.service-row .profile-btn.primary,
+.service-row .profile-btn.ghost {
+    border: 1px solid var(--color-primary);
+    color: var(--color-primary);
+    background: #fff;
+}
+
+.service-row .profile-btn.primary:hover,
+.service-row .profile-btn.ghost:hover {
+    background: rgba(0, 211, 169, 0.1);
+}
+
+.service-row.inactive .profile-btn {
+    opacity: 1;
 }
 
 .profile-btn {

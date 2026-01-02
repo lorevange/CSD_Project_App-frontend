@@ -111,6 +111,7 @@ const DoctorProfile = () => {
             services: localizedServices,
             serviceOptions,
             bio,
+            information: data.information || '',
             price: data.price != null ? toNumberOr(data.price, 0) : 0,
             reviews: data.reviews || [],
         };
@@ -224,17 +225,26 @@ const DoctorProfile = () => {
                     <div className="profile-left">
                         <section className="profile-section">
                             <h2>{t('doctor_profile.info')}</h2>
-                            <p className="profile-bio">{doctor.bio[i18n.language]}</p>
+                            <p className="profile-bio">{doctor.information || doctor.bio[i18n.language]}</p>
                         </section>
 
                         <section className="profile-section">
                             <h2>{t('doctor_profile.services')}</h2>
                             <ul className="services-list">
-                                {doctor.services[i18n.language].map((service, index) => (
-                                    <li key={index} className="service-item">
-                                        <FaCheckCircle className="check-icon" /> {service}
-                                    </li>
-                                ))}
+                                {(doctor.serviceOptions && doctor.serviceOptions.length > 0
+                                    ? doctor.serviceOptions.map((service, index) => (
+                                        <li key={service.id ?? index} className="service-item">
+                                            <FaCheckCircle className="check-icon" /> {service.name}
+                                            {service.price != null && (
+                                                <span style={{ marginLeft: '8px', color: '#555' }}>€{service.price}</span>
+                                            )}
+                                        </li>
+                                    ))
+                                    : doctor.services[i18n.language].map((service, index) => (
+                                        <li key={index} className="service-item">
+                                            <FaCheckCircle className="check-icon" /> {service}
+                                        </li>
+                                    )))}
                             </ul>
                         </section>
 
