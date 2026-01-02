@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import Header from '../components/Header';
@@ -9,6 +9,7 @@ import { FaStar, FaMapMarkerAlt, FaStethoscope, FaCheckCircle } from 'react-icon
 import '../styles/DoctorProfile.css';
 import Map from '../components/Map';
 import { getDoctorById } from '../api/doctors';
+import { getAppointments } from '../api/appointments';
 import { normalizePhotoToDataUrl } from '../utils/photo';
 
 const DoctorProfile = () => {
@@ -18,6 +19,9 @@ const DoctorProfile = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [appointments, setAppointments] = useState([]);
+    const [appointmentsError, setAppointmentsError] = useState(null);
+    const [isAppointmentsLoading, setIsAppointmentsLoading] = useState(false);
 
     const adaptDoctorData = useCallback((data = {}) => {
         const buildLocalizedText = (value, fallbackIt = '', fallbackEn = '') => {
@@ -99,6 +103,40 @@ const DoctorProfile = () => {
 
         fetchDoctor();
     }, [id, adaptDoctorData, t]);
+
+    useEffect(() => {
+        const fetchAppointments = async () => {
+            setIsAppointmentsLoading(true);
+            setAppointmentsError(null);
+            try {
+                const data = await getAppointments({ doctorId: id, status: 'scheduled' });
+                const normalized = Array.isArray(data) ? data.map((appt) => ({
+                    id: appt.id,
+                    doctorId: appt.doctor_id,
+                    userId: appt.user_id,
+                    startDatetime: appt.start_datetime,
+                    endDatetime: appt.end_datetime,
+                    examinationType: appt.examination_type,
+                    notes: appt.notes,
+                    status: appt.status,
+                })) : [];
+                setAppointments(normalized);
+            } catch (err) {
+                console.error('Error fetching appointments:', err);
+                setAppointmentsError(err.message || t('appointments.load_error', 'Unable to load appointments'));
+            } finally {
+                setIsAppointmentsLoading(false);
+            }
+        };
+
+        fetchAppointments();
+    }, [id, t]);
+
+    const doctorAppointments = useMemo(() => {
+        const docId = Number(doctor?.id);
+        if (!Number.isFinite(docId)) return [];
+        return appointments.filter((appt) => Number(appt.doctorId) === docId);
+    }, [appointments, doctor]);
 
     if (isLoading) {
         return (
@@ -200,6 +238,17 @@ const DoctorProfile = () => {
                             </div>
                             <button className="book-btn-lg" onClick={() => setIsModalOpen(true)}>{t('booking.book_now')}</button>
                             <p className="booking-note">{t('booking.no_prepayment')}</p>
+                            {isAppointmentsLoading && (
+                                <p className="booking-note">{t('booking.checking_availability', 'Checking availability...')}</p>
+                            )}
+                            {appointmentsError && (
+                                <p className="booking-note">{appointmentsError}</p>
+                            )}
+                            {!isAppointmentsLoading && !appointmentsError && (
+                                <p className="booking-note">
+                                    {t('booking.existing_appointments', { count: doctorAppointments.length, defaultValue: `${doctorAppointments.length} existing appointments` })}
+                                </p>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -209,6 +258,7 @@ const DoctorProfile = () => {
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 doctorName={doctor.name}
+                appointments={doctorAppointments}
             />
 
             <Footer />
