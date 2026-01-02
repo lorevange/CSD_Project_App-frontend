@@ -9,6 +9,7 @@ import { FaStar, FaMapMarkerAlt, FaStethoscope, FaCheckCircle } from 'react-icon
 import '../styles/DoctorProfile.css';
 import Map from '../components/Map';
 import { getDoctorById } from '../api/doctors';
+import { normalizePhotoToDataUrl } from '../utils/photo';
 
 const DoctorProfile = () => {
     const { id } = useParams();
@@ -61,6 +62,7 @@ const DoctorProfile = () => {
 
         const hasLatitude = data.latitude !== undefined && data.latitude !== null;
         const hasLongitude = data.longitude !== undefined && data.longitude !== null;
+        const resolvedPhoto = normalizePhotoToDataUrl(data?.photo, 'image/png') || data?.image || data?.photo_url || data?.avatar || 'https://via.placeholder.com/150';
 
         return {
             id: data.id ?? id,
@@ -72,7 +74,7 @@ const DoctorProfile = () => {
             longitude: hasLongitude ? toNumberOr(data.longitude, null) : null,
             rating: data.rating != null ? toNumberOr(data.rating, 0) : 0,
             reviewsCount: data.reviewsCount ?? data.reviews_count ?? 0,
-            image: data.image || 'https://via.placeholder.com/150',
+            image: resolvedPhoto,
             services: localizedServices,
             bio,
             price: data.price != null ? toNumberOr(data.price, 0) : 0,

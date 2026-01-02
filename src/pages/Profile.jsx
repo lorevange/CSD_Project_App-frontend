@@ -5,6 +5,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { UserContext } from '../context/UserContext';
 import '../styles/Profile.css';
+import { normalizePhotoToDataUrl } from '../utils/photo';
 
 const Profile = () => {
     const { t } = useTranslation();
@@ -14,6 +15,7 @@ const Profile = () => {
     const [firstName, setFirstName] = useState(user?.first_name || '');
     const [lastName, setLastName] = useState(user?.last_name || '');
     const [photoPreview, setPhotoPreview] = useState(null);
+    const [photoData, setPhotoData] = useState(user?.photo || null);
     const [statusMessage, setStatusMessage] = useState('');
     const fileInputRef = useRef(null);
 
@@ -21,16 +23,10 @@ const Profile = () => {
         if (user) {
             setFirstName(user.first_name || '');
             setLastName(user.last_name || '');
+            setPhotoData(user.photo || null);
+            setPhotoPreview(null);
         }
     }, [user]);
-
-    useEffect(() => {
-        return () => {
-            if (photoPreview) {
-                URL.revokeObjectURL(photoPreview);
-            }
-        };
-    }, [photoPreview]);
 
     if (!user) {
         return (
@@ -49,15 +45,22 @@ const Profile = () => {
         );
     }
 
-    const displayedPhoto = photoPreview || user?.avatar || user?.photo_url || null;
+    const formattedUserPhoto = photoPreview || normalizePhotoToDataUrl(photoData, 'image/png');
+    const displayedPhoto = formattedUserPhoto || null;
     const committedFirstName = user?.first_name || '';
     const committedLastName = user?.last_name || '';
     const avatarLetters = committedFirstName.slice(0, 1) + committedLastName.slice(0, 1);
-    const isDirty = firstName !== committedFirstName || lastName !== committedLastName;
+    const committedPhoto = user?.photo || null;
+    const isDirty = firstName !== committedFirstName || lastName !== committedLastName || photoData !== committedPhoto;
 
     const handleNamesSave = (e) => {
         e.preventDefault();
-        updateUser?.({ identity_number: user?.identity_number, first_name: firstName, last_name: lastName });
+        updateUser?.({
+            identity_number: user?.identity_number,
+            first_name: firstName,
+            last_name: lastName,
+            photo: photoData
+        });
         setStatusMessage(t('profile.save_success', 'Profile updated.'));
     };
 
@@ -65,13 +68,17 @@ const Profile = () => {
         const file = event.target.files?.[0];
         if (!file) return;
 
-        if (photoPreview) {
-            URL.revokeObjectURL(photoPreview);
-        }
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            const result = reader.result;
+            if (typeof result === 'string') {
+                setPhotoData(result);
+                setPhotoPreview(result);
+                setStatusMessage(t('profile.photo_ready', 'Picture ready to upload. Save to apply.'));
+            }
+        };
 
-        const previewUrl = URL.createObjectURL(file);
-        setPhotoPreview(previewUrl);
-        setStatusMessage(t('profile.photo_placeholder', 'Picture selected (upload will be added later).'));
+        reader.readAsDataURL(file);
     };
 
     const handleAvatarEdit = () => {

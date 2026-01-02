@@ -8,6 +8,8 @@ import DoctorCard from '../components/DoctorCard';
 import SkeletonCard from '../components/SkeletonCard';
 import Map from '../components/Map';
 import { searchDoctors } from '../api/doctors';
+import { normalizePhotoToDataUrl } from '../utils/photo';
+import '../styles/SearchResults.css';
 import '../styles/SearchResults.css';
 
 const SearchResults = () => {
@@ -46,7 +48,7 @@ const SearchResults = () => {
                     // Mock/Placeholder for missing backend fields
                     rating: 0,
                     reviewsCount: 0,
-                    image: "https://via.placeholder.com/150",
+                    image: normalizePhotoToDataUrl(doc?.photo, 'image/png') || 'https://picsum.photos/200/300',
                     services: { it: ["Servizio Base"], en: ["Base Service"] },
                     price: 0,
                     reviews: []
