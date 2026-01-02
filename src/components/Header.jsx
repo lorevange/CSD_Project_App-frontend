@@ -6,6 +6,7 @@ import { useTheme } from '../context/ThemeContext';
 import { UserContext } from '../context/UserContext';
 import Spinner from './Spinner';
 import '../styles/Header.css';
+import { normalizePhotoToDataUrl } from '../utils/photo';
 
 const Header = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -15,6 +16,8 @@ const Header = () => {
     const { user, logout, isAuthChecking } = useContext(UserContext);
     const navigate = useNavigate();
     const logoutTimerRef = useRef(null);
+    const userPhoto = user?.photo ? normalizePhotoToDataUrl(user.photo, 'image/png') : null;
+    const userName = `${user?.first_name || ''} ${user?.last_name || ''}`.trim() || t('nav.profile', 'Profile');
 
     const toggleMenu = () => setIsOpen(!isOpen);
     const changeLanguage = (lng) => i18n.changeLanguage(lng);
@@ -54,17 +57,28 @@ const Header = () => {
 
                     <nav className={`nav-menu ${isOpen ? 'active' : ''}`}>
                         <ul className="nav-list">
-                            <li className="nav-item">
-                                <Link to="/" className="nav-link" onClick={toggleMenu}>
-                                    {t('nav.home')}
-                                </Link>
-                            </li>
+                                <li className="nav-item">
+                                    <Link to="/" className="nav-link" onClick={toggleMenu}>
+                                        {t('nav.home')}
+                                    </Link>
+                                </li>
 
                         {user ? (
                             <>
                                 <li className="nav-item">
+                                    <Link to="/appointments" className="nav-link" onClick={toggleMenu}>
+                                        {t('nav.appointments', 'Appointments')}
+                                    </Link>
+                                </li>
+                                <li className="nav-item">
                                     <Link to="/profile" className="nav-link header-user" onClick={toggleMenu}>
-                                        {user.first_name} {user.last_name}
+                                        {userPhoto ? (
+                                            <span className="header-avatar-wrapper">
+                                                <img src={userPhoto} alt={userName} className="header-avatar" />
+                                            </span>
+                                        ) : (
+                                            userName
+                                        )}
                                     </Link>
                                 </li>
                                 <li className="nav-item">

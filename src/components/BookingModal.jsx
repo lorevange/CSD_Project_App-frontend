@@ -179,7 +179,7 @@ const BookingModal = ({ isOpen, onClose, doctorName, doctorId, appointments = []
                                 <span className="section-label">{t('booking.select_service', 'Select an examination')}</span>
                                 {services.length > 0 ? (
                                     <div className="services-grid">
-                                        {services.map((service) => (
+                                        {services.length > 0 ? services.map((service) => (
                                             <button
                                                 key={service.id ?? service.name}
                                                 type="button"
@@ -189,7 +189,8 @@ const BookingModal = ({ isOpen, onClose, doctorName, doctorId, appointments = []
                                                 <div className="service-name">{service.name}</div>
                                                 <div className="service-price">€{service.price ?? 0}</div>
                                             </button>
-                                        ))}
+                                        )) :
+                                        <p>{t('booking.no_services', 'No services available')}</p>}
                                     </div>
                                 ) : (
                                     <p className="booking-note">{t('booking.no_services', 'No services available')}</p>

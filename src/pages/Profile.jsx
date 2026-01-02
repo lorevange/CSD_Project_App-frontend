@@ -304,7 +304,7 @@ const Profile = () => {
                                             {svc.is_active === false ? (
                                                 <button
                                                     type="button"
-                                                    className="profile-btn ghost"
+                                                    className="profile-btn ghost activate"
                                                     onClick={() => handleServiceActivate(svc.id)}
                                                 >
                                                     {t('profile.activate', 'Activate')}
@@ -312,7 +312,7 @@ const Profile = () => {
                                             ) : (
                                                 <button
                                                     type="button"
-                                                    className="profile-btn ghost"
+                                                    className="profile-btn ghost deactivate"
                                                     onClick={() => handleServiceDeactivate(svc.id)}
                                                 >
                                                     {t('profile.deactivate', 'Deactivate')}

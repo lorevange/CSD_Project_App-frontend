@@ -8,6 +8,7 @@ import DoctorProfile from "./pages/DoctorProfile";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Profile from "./pages/Profile";
+import Appointments from "./pages/Appointments";
 import BottomNav from "./components/BottomNav";
 import OfflinePage from "./components/OfflinePage";
 import AuthBootstrap from './components/AuthBootstrap';
@@ -62,6 +63,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/appointments" element={<Appointments />} />
       </Routes>
       <BottomNav />
     </BrowserRouter>

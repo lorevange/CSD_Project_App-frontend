@@ -28,3 +28,10 @@ export async function createAppointment({ doctorId, userId, doctorServiceId, sta
         }),
     });
 }
+
+export async function cancelAppointment(appointmentId) {
+    const params = new URLSearchParams({ status: 'cancelled' });
+    return apiRequest(`/appointments/${appointmentId}/status?${params.toString()}`, {
+        method: 'PATCH',
+    });
+}

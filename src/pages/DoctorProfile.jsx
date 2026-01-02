@@ -139,7 +139,7 @@ const DoctorProfile = () => {
         setIsAppointmentsLoading(true);
         setAppointmentsError(null);
         try {
-            const data = await getAppointments({ doctorId: id, status: 'scheduled' });
+            const data = await getAppointments({ doctorId: id, status: 'scheduled', startFrom: new Date().toISOString() });
             const normalized = Array.isArray(data) ? data.map((appt) => ({
                 id: appt.id,
                 doctorId: appt.doctor_id,
@@ -296,7 +296,7 @@ const DoctorProfile = () => {
                 doctorName={doctor.name}
                 doctorId={doctor.id}
                 appointments={doctorAppointments}
-                services={doctor.serviceOptions}
+                services={doctor.serviceOptions.filter((svc) => svc.isActive)}
                 onAppointmentBooked={fetchAppointments}
             />
 

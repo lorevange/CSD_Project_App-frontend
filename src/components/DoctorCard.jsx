@@ -54,7 +54,11 @@ const DoctorCard = ({ doctor, isHighlighted }) => {
                 </div>
             </div>
             <div className="doctor-actions">
-                <div className="price-tag">Da €{displayedPrice}</div>
+                {displayedPrice ? (
+                    <div className="price-tag">Da €{displayedPrice}</div>
+                ) : (
+                    <div className="price-tag">{t('doctors.price_unavailable', 'Price unavailable')}</div>
+                )}
                 <Link to={`/doctor/${doctor.id}`} className="book-btn">
                     {t('doctors.book')}
                 </Link>
