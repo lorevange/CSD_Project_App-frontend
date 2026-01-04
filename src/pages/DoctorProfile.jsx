@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import Header from '../components/Header';
@@ -9,6 +9,8 @@ import { FaStar, FaMapMarkerAlt, FaStethoscope, FaCheckCircle } from 'react-icon
 import '../styles/DoctorProfile.css';
 import Map from '../components/Map';
 import { getDoctorById } from '../api/doctors';
+import { getAppointments } from '../api/appointments';
+import { normalizePhotoToDataUrl } from '../utils/photo';
 
 const DoctorProfile = () => {
     const { id } = useParams();
@@ -17,6 +19,9 @@ const DoctorProfile = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [appointments, setAppointments] = useState([]);
+    const [appointmentsError, setAppointmentsError] = useState(null);
+    const [isAppointmentsLoading, setIsAppointmentsLoading] = useState(false);
 
     const adaptDoctorData = useCallback((data = {}) => {
         const buildLocalizedText = (value, fallbackIt = '', fallbackEn = '') => {
@@ -33,17 +38,46 @@ const DoctorProfile = () => {
             };
         };
 
+        const normalizeServiceList = (list) => {
+            if (!Array.isArray(list)) return [];
+            return list.map((item) => {
+                if (item && typeof item === 'object') {
+                    return String(item.name ?? item.label ?? item.title ?? '');
+                }
+                return String(item ?? '');
+            }).filter(Boolean);
+        };
+
+        const normalizeServiceOptions = (list) => {
+            if (!Array.isArray(list)) return [];
+            return list.map((item) => ({
+                name: item?.name ?? item?.label ?? item?.title ?? String(item ?? ''),
+                price: Number.isFinite(Number(item?.price)) ? Number(item.price) : 0,
+                id: item?.id,
+                doctorId: item?.doctor_id,
+                isActive: item?.is_active,
+            })).filter((opt) => Boolean(opt.name));
+        };
+
         const servicesFromApi = data?.services;
         let localizedServices;
+        let serviceOptions = [];
         if (Array.isArray(servicesFromApi)) {
-            localizedServices = { it: servicesFromApi, en: servicesFromApi };
+            const normalized = normalizeServiceList(servicesFromApi);
+            serviceOptions = normalizeServiceOptions(servicesFromApi);
+            localizedServices = { it: normalized, en: normalized };
         } else if (servicesFromApi && typeof servicesFromApi === 'object') {
+            const source = servicesFromApi.it || servicesFromApi.en || servicesFromApi;
+            const itServices = normalizeServiceList(source);
+            const enServices = normalizeServiceList(servicesFromApi.en || servicesFromApi.it || servicesFromApi);
+            serviceOptions = normalizeServiceOptions(source);
             localizedServices = {
-                it: servicesFromApi.it || servicesFromApi.en || [],
-                en: servicesFromApi.en || servicesFromApi.it || [],
+                it: itServices,
+                en: enServices,
             };
         } else {
             localizedServices = { it: [], en: [] };
+            serviceOptions = [];
         }
 
         const specialization = buildLocalizedText(
@@ -61,6 +95,7 @@ const DoctorProfile = () => {
 
         const hasLatitude = data.latitude !== undefined && data.latitude !== null;
         const hasLongitude = data.longitude !== undefined && data.longitude !== null;
+        const resolvedPhoto = normalizePhotoToDataUrl(data?.photo, 'image/png') || data?.image || data?.photo_url || data?.avatar || 'https://via.placeholder.com/150';
 
         return {
             id: data.id ?? id,
@@ -72,9 +107,11 @@ const DoctorProfile = () => {
             longitude: hasLongitude ? toNumberOr(data.longitude, null) : null,
             rating: data.rating != null ? toNumberOr(data.rating, 0) : 0,
             reviewsCount: data.reviewsCount ?? data.reviews_count ?? 0,
-            image: data.image || 'https://via.placeholder.com/150',
+            image: resolvedPhoto,
             services: localizedServices,
+            serviceOptions,
             bio,
+            information: data.information || '',
             price: data.price != null ? toNumberOr(data.price, 0) : 0,
             reviews: data.reviews || [],
         };
@@ -97,6 +134,40 @@ const DoctorProfile = () => {
 
         fetchDoctor();
     }, [id, adaptDoctorData, t]);
+
+    const fetchAppointments = useCallback(async () => {
+        setIsAppointmentsLoading(true);
+        setAppointmentsError(null);
+        try {
+            const data = await getAppointments({ doctorId: id, status: 'scheduled', startFrom: new Date().toISOString() });
+            const normalized = Array.isArray(data) ? data.map((appt) => ({
+                id: appt.id,
+                doctorId: appt.doctor_id,
+                userId: appt.user_id,
+                startDatetime: appt.start_datetime,
+                endDatetime: appt.end_datetime,
+                examinationType: appt.examination_type,
+                notes: appt.notes,
+                status: appt.status,
+            })) : [];
+            setAppointments(normalized);
+        } catch (err) {
+            console.error('Error fetching appointments:', err);
+            setAppointmentsError(err.message || t('appointments.load_error', 'Unable to load appointments'));
+        } finally {
+            setIsAppointmentsLoading(false);
+        }
+    }, [id, t]);
+
+    useEffect(() => {
+        fetchAppointments();
+    }, [fetchAppointments]);
+
+    const doctorAppointments = useMemo(() => {
+        const docId = Number(doctor?.id);
+        if (!Number.isFinite(docId)) return [];
+        return appointments.filter((appt) => Number(appt.doctorId) === docId);
+    }, [appointments, doctor]);
 
     if (isLoading) {
         return (
@@ -154,17 +225,26 @@ const DoctorProfile = () => {
                     <div className="profile-left">
                         <section className="profile-section">
                             <h2>{t('doctor_profile.info')}</h2>
-                            <p className="profile-bio">{doctor.bio[i18n.language]}</p>
+                            <p className="profile-bio">{doctor.information || doctor.bio[i18n.language]}</p>
                         </section>
 
                         <section className="profile-section">
                             <h2>{t('doctor_profile.services')}</h2>
                             <ul className="services-list">
-                                {doctor.services[i18n.language].map((service, index) => (
-                                    <li key={index} className="service-item">
-                                        <FaCheckCircle className="check-icon" /> {service}
-                                    </li>
-                                ))}
+                                {(doctor.serviceOptions && doctor.serviceOptions.length > 0
+                                    ? doctor.serviceOptions.map((service, index) => (
+                                        <li key={service.id ?? index} className="service-item">
+                                            <FaCheckCircle className="check-icon" /> {service.name}
+                                            {service.price != null && (
+                                                <span style={{ marginLeft: '8px', color: '#555' }}>€{service.price}</span>
+                                            )}
+                                        </li>
+                                    ))
+                                    : doctor.services[i18n.language].map((service, index) => (
+                                        <li key={index} className="service-item">
+                                            <FaCheckCircle className="check-icon" /> {service}
+                                        </li>
+                                    )))}
                             </ul>
                         </section>
 
@@ -192,12 +272,19 @@ const DoctorProfile = () => {
                     <div className="profile-right">
                         <div className="booking-card">
                             <h3>{t('booking.title')}</h3>
-                            <div className="price-info">
-                                <span>{t('doctor_profile.first_visit')}</span>
-                                <span className="price">€{doctor.price}</span>
-                            </div>
                             <button className="book-btn-lg" onClick={() => setIsModalOpen(true)}>{t('booking.book_now')}</button>
                             <p className="booking-note">{t('booking.no_prepayment')}</p>
+                            {isAppointmentsLoading && (
+                                <p className="booking-note">{t('booking.checking_availability', 'Checking availability...')}</p>
+                            )}
+                            {appointmentsError && (
+                                <p className="booking-note">{appointmentsError}</p>
+                            )}
+                            {!isAppointmentsLoading && !appointmentsError && (
+                                <p className="booking-note">
+                                    {t('booking.existing_appointments', { count: doctorAppointments.length, defaultValue: `${doctorAppointments.length} existing appointments` })}
+                                </p>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -207,6 +294,10 @@ const DoctorProfile = () => {
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 doctorName={doctor.name}
+                doctorId={doctor.id}
+                appointments={doctorAppointments}
+                services={doctor.serviceOptions.filter((svc) => svc.isActive)}
+                onAppointmentBooked={fetchAppointments}
             />
 
             <Footer />

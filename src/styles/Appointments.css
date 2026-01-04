@@ -1,0 +1,89 @@
+.appointments-page {
+    background: linear-gradient(135deg, var(--hero-gradient-start), var(--hero-gradient-end));
+    min-height: 100vh;
+    color: var(--text-main);
+    transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.appointments-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: var(--spacing-xxl) var(--spacing-lg);
+}
+
+.appointments-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xl);
+}
+
+.appointments-section h2 {
+    margin-bottom: var(--spacing-md);
+}
+
+.link-inline {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s ease, text-decoration 0.2s ease;
+}
+
+.link-inline:hover {
+    color: var(--color-primary-dark);
+    text-decoration: underline;
+}
+
+.appointments-grid.doctor-view {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: var(--spacing-lg);
+    align-items: start;
+}
+
+.appointments-section h2 {
+    margin-bottom: var(--spacing-md);
+}
+
+.appointments-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-md);
+}
+
+.appointment-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-md);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    background: var(--card-bg);
+    box-shadow: var(--shadow-sm);
+    gap: var(--spacing-md);
+    flex-wrap: wrap;
+    color: var(--text-main);
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.appointment-card.cancelled {
+    opacity: 0.65;
+    background: var(--bg-light);
+}
+
+.appt-row {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: var(--spacing-sm);
+    margin-bottom: 6px;
+}
+
+.appt-row .label {
+    color: var(--text-light);
+    font-weight: 600;
+}
+
+.error {
+    color: #ff6b6b;
+    margin-top: var(--spacing-sm);
+}

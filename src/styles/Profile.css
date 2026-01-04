@@ -2,6 +2,7 @@
     background: radial-gradient(circle at 15% 20%, rgba(255, 255, 255, 0.15), transparent 35%), radial-gradient(circle at 80% 0%, rgba(255, 255, 255, 0.1), transparent 30%), linear-gradient(135deg, var(--hero-gradient-start), var(--hero-gradient-end));
     min-height: 100vh;
     color: var(--text-main);
+    transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
 .profile-container {
@@ -12,18 +13,24 @@
 
 .profile-card {
     position: relative;
-    background: linear-gradient(145deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.5));
+    background: var(--card-bg);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-lg);
     padding: var(--spacing-xl);
     backdrop-filter: blur(6px);
-    border: 1px solid rgba(255, 255, 255, 0.6);
+    border: 1px solid var(--border-color);
     overflow: hidden;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .profile-card > * {
     position: relative;
     z-index: 1;
+}
+
+.profile-card textarea {
+    position: relative;
+    z-index: 2;
 }
 
 .profile-card::before {
@@ -163,11 +170,12 @@
 }
 
 .panel {
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.75));
-    border: 1px solid rgba(0, 0, 0, 0.05);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
     border-radius: var(--radius-lg);
     padding: var(--spacing-lg);
     box-shadow: var(--shadow-sm);
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .panel + .panel {
@@ -209,6 +217,22 @@
     border-radius: var(--radius-md);
     background: var(--input-bg);
     font-size: 1rem;
+    box-sizing: border-box;
+    color: var(--text-main);
+}
+
+.form-row textarea {
+    padding: 12px;
+    border: 1px solid var(--input-border);
+    border-radius: var(--radius-md);
+    background: var(--input-bg);
+    font-size: 1rem;
+    box-sizing: border-box;
+    resize: vertical;
+    min-height: 120px;
+    position: relative;
+    z-index: 3;
+    color: var(--text-main);
 }
 
 .profile-actions {
@@ -218,13 +242,95 @@
     margin-top: var(--spacing-sm);
 }
 
+.services-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+}
+
+.service-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-sm);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background: var(--input-bg);
+}
+
+.service-row.inactive {
+    opacity: 0.6;
+    background: var(--bg-light);
+}
+
+.service-name {
+    font-weight: 600;
+}
+
+.service-price {
+    color: var(--color-primary);
+    font-weight: 500;
+}
+
+.service-status.inactive {
+    display: inline-block;
+    margin-top: 4px;
+    padding: 2px 8px;
+    background: rgba(0, 0, 0, 0.05);
+    color: var(--text-light);
+    border-radius: var(--radius-full);
+    font-size: 0.85rem;
+}
+
+.service-row .profile-btn {
+    min-width: 120px;
+    text-align: center;
+}
+
+.service-row .profile-btn.primary,
+.service-row .profile-btn.ghost {
+    border: 1px solid var(--color-primary);
+    color: var(--color-primary);
+    background: var(--card-bg);
+}
+
+.service-row .profile-btn.deactivate {
+    border-color: #d9534f;
+    color: #d9534f;
+    background: rgba(217, 83, 79, 0.08);
+}
+
+.service-row .profile-btn.deactivate:hover {
+    background: rgba(217, 83, 79, 0.15);
+}
+
+.service-row .profile-btn.activate {
+    border-color: #28a745;
+    color: #28a745;
+    background: rgba(40, 167, 69, 0.08);
+}
+
+.service-row .profile-btn.activate:hover {
+    background: rgba(40, 167, 69, 0.15);
+}
+
+.service-row .profile-btn.primary:hover,
+.service-row .profile-btn.ghost:hover {
+    background: rgba(0, 211, 169, 0.1);
+}
+
+.service-row.inactive .profile-btn {
+    opacity: 1;
+}
+
 .profile-btn {
     border: none;
     padding: 12px 18px;
     border-radius: var(--radius-md);
     cursor: pointer;
     font-weight: 600;
-    transition: transform 0.1s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    transition: transform 0.1s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease;
 }
 
 .profile-btn.primary {
@@ -302,6 +408,7 @@
     padding: var(--spacing-md);
     border-radius: var(--radius-md);
     border: 1px solid var(--border-color);
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
 .info-label {

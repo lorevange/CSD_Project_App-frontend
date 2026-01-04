@@ -14,6 +14,18 @@ const DoctorCard = ({ doctor, isHighlighted }) => {
         }
     }, [isHighlighted]);
 
+    const minServicePrice = (() => {
+        if (!Array.isArray(doctor.services)) return null;
+        const prices = doctor.services
+            .filter((s) => s.is_active)
+            .map((s) => Number(s.price))
+            .filter((p) => Number.isFinite(p));
+        if (!prices.length) return null;
+        return Math.min(...prices);
+    })();
+
+    const displayedPrice = minServicePrice != null ? minServicePrice : doctor.price;
+
     return (
         <div className={`doctor-card ${isHighlighted ? 'highlighted' : ''}`} ref={cardRef}>
             <div className="doctor-image-container">
@@ -40,17 +52,13 @@ const DoctorCard = ({ doctor, isHighlighted }) => {
                         {doctor.rating} ({doctor.reviewsCount} {t('doctors.reviews')})
                     </span>
                 </div>
-                <div className="doctor-services">
-                    {doctor.services[i18n.language].slice(0, 2).map((service, index) => (
-                        <span key={index} className="service-tag">{service}</span>
-                    ))}
-                    {doctor.services[i18n.language].length > 2 && (
-                        <span className="service-tag more">+{doctor.services[i18n.language].length - 2} altri</span>
-                    )}
-                </div>
             </div>
             <div className="doctor-actions">
-                <div className="price-tag">Da €{doctor.price}</div>
+                {displayedPrice ? (
+                    <div className="price-tag">Da €{displayedPrice}</div>
+                ) : (
+                    <div className="price-tag">{t('doctors.price_unavailable', 'Price unavailable')}</div>
+                )}
                 <Link to={`/doctor/${doctor.id}`} className="book-btn">
                     {t('doctors.book')}
                 </Link>

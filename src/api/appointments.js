@@ -1,0 +1,37 @@
+import { apiRequest } from './client';
+
+export async function getAppointments({ doctorId, userId, startFrom, startTo, status } = {}) {
+    const params = new URLSearchParams();
+
+    if (doctorId !== undefined && doctorId !== null) params.append('doctor_id', doctorId);
+    if (userId) params.append('user_id', userId);
+    if (startFrom) params.append('start_from', startFrom instanceof Date ? startFrom.toISOString() : startFrom);
+    if (startTo) params.append('start_to', startTo instanceof Date ? startTo.toISOString() : startTo);
+    if (status) params.append('status', status);
+
+    const queryString = params.toString();
+    const path = queryString ? `/appointments/?${queryString}` : '/appointments/';
+
+    return apiRequest(path, {
+        method: 'GET',
+    });
+}
+
+export async function createAppointment({ doctorId, userId, doctorServiceId, startDatetime }) {
+    return apiRequest('/appointments/', {
+        method: 'POST',
+        body: JSON.stringify({
+            doctor_id: doctorId,
+            user_id: userId,
+            doctor_service_id: doctorServiceId,
+            start_datetime: startDatetime,
+        }),
+    });
+}
+
+export async function cancelAppointment(appointmentId) {
+    const params = new URLSearchParams({ status: 'cancelled' });
+    return apiRequest(`/appointments/${appointmentId}/status?${params.toString()}`, {
+        method: 'PATCH',
+    });
+}
