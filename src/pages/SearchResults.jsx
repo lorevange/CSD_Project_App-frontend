@@ -5,11 +5,9 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import SearchBar from '../components/SearchBar';
 import DoctorCard from '../components/DoctorCard';
-import SkeletonCard from '../components/SkeletonCard';
 import Map from '../components/Map';
 import { searchDoctors, getDoctorById } from '../api/doctors';
 import { normalizePhotoToDataUrl } from '../utils/photo';
-import '../styles/SearchResults.css';
 import '../styles/SearchResults.css';
 
 const SearchResults = () => {
@@ -23,6 +21,7 @@ const SearchResults = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [highlightedId, setHighlightedId] = useState(null);
+    const [mapCenter, setMapCenter] = useState({ lat: 41.9028, lng: 12.4964 });
 
     useEffect(() => {
         const fetchDoctors = async () => {
@@ -87,6 +86,12 @@ const SearchResults = () => {
                 }));
 
                 setFilteredDoctors(enrichedResults);
+                const firstWithCoords = enrichedResults.find((d) => d.latitude && d.longitude);
+                if (firstWithCoords) {
+                    setMapCenter({ lat: firstWithCoords.latitude, lng: firstWithCoords.longitude });
+                } else {
+                    setMapCenter({ lat: 41.9028, lng: 12.4964 });
+                }
             } catch (err) {
                 console.error("Error fetching doctors:", err);
                 setError(t('search_results.error', 'Error loading results'));
@@ -96,12 +101,22 @@ const SearchResults = () => {
         };
 
         fetchDoctors();
-    }, [initialQuery, initialCity]);
+    }, [initialQuery, initialCity, t]);
 
     const handleMarkerClick = (id) => {
         setHighlightedId(id);
-        // Optional: clear highlight after a delay
         setTimeout(() => setHighlightedId(null), 3000);
+        const doc = filteredDoctors.find((d) => d.id === id);
+        if (doc?.latitude && doc?.longitude) {
+            setMapCenter({ lat: doc.latitude, lng: doc.longitude });
+        }
+    };
+
+    const handleCardSelect = (doctor) => {
+        setHighlightedId(doctor.id);
+        if (doctor.latitude && doctor.longitude) {
+            setMapCenter({ lat: doctor.latitude, lng: doctor.longitude });
+        }
     };
 
     return (
@@ -129,14 +144,17 @@ const SearchResults = () => {
                     <div className="results-column">
                         <div className="results-list">
                             {isLoading ? (
-                                // Render 3 skeleton cards while loading
-                                [...Array(3)].map((_, index) => <SkeletonCard key={index} />)
+                                <div className="results-spinner">
+                                    <div className="spinner-ring" />
+                                    <span>{t('search_results.loading', 'Loading doctors...')}</span>
+                                </div>
                             ) : filteredDoctors.length > 0 ? (
                                 filteredDoctors.map(doctor => (
                                     <DoctorCard
                                         key={doctor.id}
                                         doctor={doctor}
                                         isHighlighted={doctor.id === highlightedId}
+                                        onSelect={() => handleCardSelect(doctor)}
                                     />
                                 ))
                             ) : (
@@ -150,8 +168,10 @@ const SearchResults = () => {
                     <div className="map-column">
                         {!isLoading && filteredDoctors.length > 0 && (
                             <Map
-                                center={filteredDoctors[0]?.latitude ? { lat: filteredDoctors[0].latitude, lng: filteredDoctors[0].longitude } : { lat: 41.9028, lng: 12.4964 }}
-                                markers={filteredDoctors.filter(d => d.latitude && d.longitude).map(d => ({ lat: d.latitude, lng: d.longitude, id: d.id }))}
+                                center={mapCenter}
+                                markers={filteredDoctors
+                                    .filter(d => d.latitude && d.longitude)
+                                    .map(d => ({ lat: d.latitude, lng: d.longitude, id: d.id }))}
                                 zoom={12}
                                 onMarkerClick={handleMarkerClick}
                             />

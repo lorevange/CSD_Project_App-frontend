@@ -4,13 +4,14 @@ import { FaStar, FaStarHalfAlt, FaMapMarkerAlt, FaStethoscope } from 'react-icon
 import { Link } from 'react-router-dom';
 import '../styles/DoctorCard.css';
 
-const DoctorCard = ({ doctor, isHighlighted }) => {
+const DoctorCard = ({ doctor, isHighlighted, onSelect }) => {
     const { t, i18n } = useTranslation();
     const cardRef = useRef(null);
+    const handleSelect = onSelect || (() => {});
 
     useEffect(() => {
         if (isHighlighted && cardRef.current) {
-            cardRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            cardRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
         }
     }, [isHighlighted]);
 
@@ -36,7 +37,19 @@ const DoctorCard = ({ doctor, isHighlighted }) => {
         : 0;
 
     return (
-        <div className={`doctor-card ${isHighlighted ? 'highlighted' : ''}`} ref={cardRef}>
+        <div
+            className={`doctor-card ${isHighlighted ? 'highlighted' : ''}`}
+            ref={cardRef}
+            onClick={handleSelect}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleSelect();
+                }
+            }}
+        >
             <div className="doctor-image-container">
                 <img src={doctor.image} alt={doctor.name} className="doctor-image" />
             </div>
@@ -75,7 +88,11 @@ const DoctorCard = ({ doctor, isHighlighted }) => {
                 ) : (
                     <div className="price-tag">{t('doctors.price_unavailable', 'Price unavailable')}</div>
                 )}
-                <Link to={`/doctor/${doctor.id}`} className="book-btn">
+                <Link
+                    to={`/doctor/${doctor.id}`}
+                    className="book-btn"
+                    onClick={(e) => e.stopPropagation()}
+                >
                     {t('doctors.book')}
                 </Link>
             </div>
