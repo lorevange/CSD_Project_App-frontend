@@ -36,6 +36,14 @@
     margin-bottom: var(--spacing-xs);
 }
 
+.summary-stars .stars .half {
+    color: var(--star-filled);
+}
+
+.summary-stars .stars .empty {
+    color: var(--star-empty);
+}
+
 .total-reviews {
     color: var(--text-light);
     font-size: var(--font-size-sm);
@@ -56,18 +64,13 @@
 
 .review-header {
     display: flex;
-    justify-content: space-between;
+    align-items: center;
     margin-bottom: var(--spacing-sm);
 }
 
 .review-user {
     font-weight: bold;
     color: var(--text-main);
-}
-
-.review-date {
-    color: var(--text-light);
-    font-size: var(--font-size-sm);
 }
 
 .review-rating {
@@ -86,4 +89,89 @@
     color: var(--text-light);
     padding: var(--spacing-lg);
     font-style: italic;
+}
+
+.review-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
+}
+
+.review-label {
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.review-stars-input {
+    display: flex;
+    gap: 6px;
+}
+
+.review-stars-input .star-input {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--star-empty);
+    font-size: 20px;
+    padding: 4px;
+    transition: transform 0.1s ease, color 0.2s ease;
+}
+
+.review-stars-input .star-input.filled {
+    color: var(--star-filled);
+}
+
+.review-stars-input .star-input:hover {
+    transform: translateY(-1px);
+}
+
+.review-form textarea {
+    width: 100%;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+    padding: var(--spacing-sm);
+    resize: vertical;
+    min-height: 100px;
+    font-family: inherit;
+}
+
+.review-error {
+    color: var(--color-danger, #d9534f);
+    font-size: var(--font-size-sm);
+}
+
+.review-auth-hint {
+    color: var(--text-light);
+    margin-bottom: var(--spacing-sm);
+}
+
+.review-user-info {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.review-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--section-bg);
+    border: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: var(--color-secondary);
+}
+
+.review-avatar.placeholder {
+    background: var(--section-bg);
+}
+
+.review-date {
+    display: block;
+    color: var(--text-light);
+    font-size: var(--font-size-sm);
 }

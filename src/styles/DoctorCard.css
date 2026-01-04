@@ -84,6 +84,10 @@
     color: var(--star-filled);
 }
 
+.star.half {
+    color: var(--star-filled);
+}
+
 .rating-text {
     margin-left: var(--spacing-sm);
     font-size: var(--font-size-sm);

@@ -7,7 +7,7 @@ import SearchBar from '../components/SearchBar';
 import DoctorCard from '../components/DoctorCard';
 import SkeletonCard from '../components/SkeletonCard';
 import Map from '../components/Map';
-import { searchDoctors } from '../api/doctors';
+import { searchDoctors, getDoctorById } from '../api/doctors';
 import { normalizePhotoToDataUrl } from '../utils/photo';
 import '../styles/SearchResults.css';
 import '../styles/SearchResults.css';
@@ -30,11 +30,20 @@ const SearchResults = () => {
             setError(null);
             try {
                 const results = await searchDoctors(initialQuery, initialCity);
+                const list = Array.isArray(results)
+                    ? results
+                    : Array.isArray(results?.items)
+                        ? results.items
+                        : Array.isArray(results?.data)
+                            ? results.data
+                            : Array.isArray(results?.results)
+                                ? results.results
+                                : [];
 
                 // Adapt API response to match frontend DoctorCard expectations
                 // Backend returns: { first_name, last_name, specialization, city, address, latitude, longitude, ... }
                 // Frontend expects: { id, name, specialization: {it, en}, services: {it, en}, rating, reviewsCount, image, ... }
-                const adaptedResults = results.map(doc => ({
+                const baseResults = list.map(doc => ({
                     id: doc.id,
                     name: `${doc.first_name} ${doc.last_name}`,
                     specialization: {
@@ -45,16 +54,39 @@ const SearchResults = () => {
                     address: doc.address,
                     latitude: doc.latitude,
                     longitude: doc.longitude,
-                    // Mock/Placeholder for missing backend fields
-                    rating: 0,
-                    reviewsCount: 0,
+                    rating: Number.isFinite(Number(doc.average_rating ?? doc.avg_rating ?? doc.rating))
+                        ? Number(doc.average_rating ?? doc.avg_rating ?? doc.rating)
+                        : 0,
+                    reviewsCount: Number.isFinite(Number(doc.reviews_count ?? doc.reviewsCount ?? doc.reviews_total))
+                        ? Number(doc.reviews_count ?? doc.reviewsCount ?? doc.reviews_total)
+                        : (Array.isArray(doc.reviews) ? doc.reviews.length : 0),
                     image: normalizePhotoToDataUrl(doc?.photo, 'image/png') || 'https://picsum.photos/200/300',
                     services: doc.services,
                     price: 0,
                     reviews: []
                 }));
 
-                setFilteredDoctors(adaptedResults);
+                const enrichedResults = await Promise.all(baseResults.map(async (doc) => {
+                    if (!doc.id) return doc;
+                    try {
+                        const detail = await getDoctorById(doc.id);
+                        return {
+                            ...doc,
+                            rating: Number.isFinite(Number(detail?.average_rating ?? detail?.avg_rating ?? detail?.rating))
+                                ? Number(detail.average_rating ?? detail.avg_rating ?? detail.rating)
+                                : doc.rating,
+                            reviewsCount: Number.isFinite(Number(detail?.ratings_count ?? detail?.reviews_count ?? detail?.reviewsCount))
+                                ? Number(detail.ratings_count ?? detail.reviews_count ?? detail.reviewsCount)
+                                : doc.reviewsCount,
+                            image: normalizePhotoToDataUrl(detail?.photo, 'image/png') || doc.image,
+                        };
+                    } catch (err) {
+                        console.warn('Failed to load doctor detail for search card', err);
+                        return doc;
+                    }
+                }));
+
+                setFilteredDoctors(enrichedResults);
             } catch (err) {
                 console.error("Error fetching doctors:", err);
                 setError(t('search_results.error', 'Error loading results'));

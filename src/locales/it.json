@@ -76,7 +76,19 @@
     "reviews": {
         "title": "Dicono di lui/lei",
         "average": "Valutazione Media",
-        "no_reviews": "Nessuna recensione ancora."
+        "no_reviews": "Nessuna recensione ancora.",
+        "anonymous": "Utente anonimo",
+        "loading": "Caricamento recensioni...",
+        "load_error": "Impossibile caricare le recensioni",
+        "leave_review": "Lascia una recensione",
+        "your_rating": "La tua valutazione",
+        "your_comment": "Il tuo commento",
+        "comment_placeholder": "Racconta la tua esperienza...",
+        "submit": "Pubblica recensione",
+        "submitting": "Invio in corso...",
+        "auth_required": "Accedi per lasciare una recensione",
+        "comment_required": "Inserisci un commento",
+        "submit_error": "Impossibile inviare la recensione"
     },
     "common": {
         "cancel": "Annulla",

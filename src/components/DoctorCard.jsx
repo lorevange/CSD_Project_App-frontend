@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FaStar, FaMapMarkerAlt, FaStethoscope } from 'react-icons/fa';
+import { FaStar, FaStarHalfAlt, FaMapMarkerAlt, FaStethoscope } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import '../styles/DoctorCard.css';
 
@@ -25,6 +25,15 @@ const DoctorCard = ({ doctor, isHighlighted }) => {
     })();
 
     const displayedPrice = minServicePrice != null ? minServicePrice : doctor.price;
+    const normalizedRating = (() => {
+        const value = Number(doctor.rating);
+        if (!Number.isFinite(value)) return 0;
+        return Math.min(5, Math.max(0, value));
+    })();
+    const filledStars = Math.floor(normalizedRating);
+    const normalizedReviewsCount = Number.isFinite(Number(doctor.reviewsCount))
+        ? Number(doctor.reviewsCount)
+        : 0;
 
     return (
         <div className={`doctor-card ${isHighlighted ? 'highlighted' : ''}`} ref={cardRef}>
@@ -42,14 +51,21 @@ const DoctorCard = ({ doctor, isHighlighted }) => {
                     <FaMapMarkerAlt className="icon" /> {doctor.address}, {doctor.city}
                 </p>
                 <div className="doctor-rating">
-                    {[...Array(5)].map((_, i) => (
-                        <FaStar
-                            key={i}
-                            className={`star ${i < Math.round(doctor.rating) ? 'filled' : ''}`}
-                        />
-                    ))}
+                    {[...Array(5)].map((_, i) => {
+                        const delta = normalizedRating - i;
+                        const isFull = delta >= 1;
+                        const isHalf = !isFull && delta >= 0.5;
+                        const Icon = isHalf ? FaStarHalfAlt : FaStar;
+                        return (
+                            <Icon
+                                key={i}
+                                className={`star ${isFull ? 'filled' : ''} ${isHalf ? 'half' : ''}`}
+                                style={{ color: (isFull || isHalf) ? 'var(--star-filled)' : 'var(--star-empty)' }}
+                            />
+                        );
+                    })}
                     <span className="rating-text">
-                        {doctor.rating} ({doctor.reviewsCount} {t('doctors.reviews')})
+                        {normalizedRating.toFixed(1)} ({normalizedReviewsCount} {t('doctors.reviews')})
                     </span>
                 </div>
             </div>

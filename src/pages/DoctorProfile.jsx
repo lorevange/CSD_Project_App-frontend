@@ -1,20 +1,23 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import BookingModal from '../components/BookingModal';
 import ReviewsList from '../components/ReviewsList';
-import { FaStar, FaMapMarkerAlt, FaStethoscope, FaCheckCircle } from 'react-icons/fa';
+import { FaStar, FaStarHalfAlt, FaMapMarkerAlt, FaStethoscope, FaCheckCircle } from 'react-icons/fa';
 import '../styles/DoctorProfile.css';
 import Map from '../components/Map';
 import { getDoctorById } from '../api/doctors';
 import { getAppointments } from '../api/appointments';
+import { createReview, listReviewsForDoctor } from '../api/reviews';
 import { normalizePhotoToDataUrl } from '../utils/photo';
+import { UserContext } from '../context/UserContext';
 
 const DoctorProfile = () => {
     const { id } = useParams();
     const { t, i18n } = useTranslation();
+    const { user } = useContext(UserContext);
     const [doctor, setDoctor] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -22,6 +25,13 @@ const DoctorProfile = () => {
     const [appointments, setAppointments] = useState([]);
     const [appointmentsError, setAppointmentsError] = useState(null);
     const [isAppointmentsLoading, setIsAppointmentsLoading] = useState(false);
+    const [reviews, setReviews] = useState([]);
+    const [isReviewsLoading, setIsReviewsLoading] = useState(false);
+    const [reviewsError, setReviewsError] = useState(null);
+    const [newRating, setNewRating] = useState(0);
+    const [newComment, setNewComment] = useState('');
+    const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+    const [reviewFormError, setReviewFormError] = useState(null);
 
     const adaptDoctorData = useCallback((data = {}) => {
         const buildLocalizedText = (value, fallbackIt = '', fallbackEn = '') => {
@@ -96,6 +106,8 @@ const DoctorProfile = () => {
         const hasLatitude = data.latitude !== undefined && data.latitude !== null;
         const hasLongitude = data.longitude !== undefined && data.longitude !== null;
         const resolvedPhoto = normalizePhotoToDataUrl(data?.photo, 'image/png') || data?.image || data?.photo_url || data?.avatar || 'https://via.placeholder.com/150';
+        const ratingValue = data.average_rating ?? data.avg_rating ?? data.rating;
+        const reviewsTotal = data.reviewsCount ?? data.reviews_count ?? data.ratings_count ?? (Array.isArray(data.reviews) ? data.reviews.length : undefined);
 
         return {
             id: data.id ?? id,
@@ -105,15 +117,15 @@ const DoctorProfile = () => {
             address: data.address || '',
             latitude: hasLatitude ? toNumberOr(data.latitude, null) : null,
             longitude: hasLongitude ? toNumberOr(data.longitude, null) : null,
-            rating: data.rating != null ? toNumberOr(data.rating, 0) : 0,
-            reviewsCount: data.reviewsCount ?? data.reviews_count ?? 0,
+            rating: ratingValue != null ? toNumberOr(ratingValue, 0) : 0,
+            reviewsCount: reviewsTotal != null ? toNumberOr(reviewsTotal, 0) : 0,
             image: resolvedPhoto,
             services: localizedServices,
             serviceOptions,
             bio,
             information: data.information || '',
             price: data.price != null ? toNumberOr(data.price, 0) : 0,
-            reviews: data.reviews || [],
+            reviews: Array.isArray(data.reviews) ? data.reviews : [],
         };
     }, [id, t]);
 
@@ -163,11 +175,108 @@ const DoctorProfile = () => {
         fetchAppointments();
     }, [fetchAppointments]);
 
+    const normalizeReview = useCallback((review) => {
+        const ratingValue = Number(review?.rating);
+        const clampedRating = Number.isFinite(ratingValue)
+            ? Math.min(5, Math.max(0, ratingValue))
+            : 0;
+
+        const author = review?.author || review?.user || {};
+        const authorName = [`${author.first_name || ''}`.trim(), `${author.last_name || ''}`.trim()]
+            .filter(Boolean)
+            .join(' ')
+            || author.name
+            || author.username
+            || review?.author_name
+            || t('reviews.anonymous', 'Anonymous');
+        const dateValue = review?.created_at || review?.createdAt || review?.date;
+        const dateObj = dateValue ? new Date(dateValue) : null;
+        const formattedDate = dateObj && !Number.isNaN(dateObj.getTime()) ? dateObj.toLocaleDateString() : '';
+        const photo = normalizePhotoToDataUrl(author?.photo, 'image/png');
+
+        return {
+            id: review?.id ?? review?.review_id ?? `${authorName || 'review'}-${dateValue || Math.random()}`,
+            rating: clampedRating,
+            comment: review?.comment || '',
+            date: formattedDate,
+            user: authorName,
+            photo,
+        };
+    }, [t]);
+
+    const fetchReviews = useCallback(async () => {
+        setIsReviewsLoading(true);
+        setReviewsError(null);
+        try {
+            const data = await listReviewsForDoctor(id);
+            const normalized = Array.isArray(data) ? data.map((rev) => normalizeReview(rev)) : [];
+            setReviews(normalized);
+        } catch (err) {
+            console.error('Error fetching reviews:', err);
+            setReviewsError(err.message || t('reviews.load_error', 'Unable to load reviews'));
+        } finally {
+            setIsReviewsLoading(false);
+        }
+    }, [id, normalizeReview, t]);
+
+    useEffect(() => {
+        fetchReviews();
+    }, [fetchReviews]);
+
     const doctorAppointments = useMemo(() => {
         const docId = Number(doctor?.id);
         if (!Number.isFinite(docId)) return [];
         return appointments.filter((appt) => Number(appt.doctorId) === docId);
     }, [appointments, doctor]);
+
+    const averageRating = useMemo(() => {
+        if (Number.isFinite(doctor?.rating)) return doctor.rating;
+        if (reviews.length > 0) {
+            const total = reviews.reduce((sum, rev) => sum + (Number.isFinite(rev.rating) ? rev.rating : 0), 0);
+            return total / reviews.length;
+        }
+        return 0;
+    }, [doctor, reviews]);
+
+    const totalReviews = useMemo(() => {
+        const fromDoctor = doctor?.reviewsCount ?? doctor?.reviews_count ?? doctor?.ratings_count;
+        if (Number.isFinite(Number(fromDoctor))) return Number(fromDoctor);
+        if (reviews.length > 0) return reviews.length;
+        return 0;
+    }, [doctor, reviews]);
+
+    const handleSubmitReview = async (event) => {
+        event.preventDefault();
+        if (!user) {
+            setReviewFormError(t('reviews.auth_required', 'Please sign in to leave a review'));
+            return;
+        }
+        if (!doctor?.id) return;
+
+        const clampedRating = Math.min(5, Math.max(0, Number(newRating) || 0));
+        const trimmedComment = newComment.trim();
+        if (!trimmedComment) {
+            setReviewFormError(t('reviews.comment_required', 'Please add a comment'));
+            return;
+        }
+
+        setIsSubmittingReview(true);
+        setReviewFormError(null);
+        try {
+            await createReview(doctor.id, {
+                rating: clampedRating,
+                comment: trimmedComment,
+            });
+            setNewRating(0);
+            setNewComment('');
+            await fetchReviews();
+        } catch (err) {
+            console.error('Error submitting review:', err);
+            setReviewFormError(err.message || t('reviews.submit_error', 'Unable to submit review'));
+        } finally {
+            setIsSubmittingReview(false);
+        }
+    };
 
     if (isLoading) {
         return (
@@ -210,13 +319,20 @@ const DoctorProfile = () => {
                             <FaStethoscope className="icon" /> {doctor.specialization[i18n.language]}
                         </p>
                         <div className="profile-rating">
-                            {[...Array(5)].map((_, i) => (
-                                <FaStar
-                                    key={i}
-                                    className={`star ${i < Math.round(doctor.rating) ? 'filled' : ''}`}
-                                />
-                            ))}
-                            <span className="rating-count">{doctor.reviewsCount} {t('doctors.reviews')}</span>
+                            {[...Array(5)].map((_, i) => {
+                                const delta = (averageRating || 0) - i;
+                                const isFull = delta >= 1;
+                                const isHalf = !isFull && delta >= 0.5;
+                                const Icon = isHalf ? FaStarHalfAlt : FaStar;
+                                return (
+                                    <Icon
+                                        key={i}
+                                        className={`star ${isFull ? 'filled' : ''} ${isHalf ? 'half' : ''}`}
+                                        style={{ color: (isFull || isHalf) ? 'var(--star-filled)' : 'var(--star-empty)' }}
+                                    />
+                                );
+                            })}
+                            <span className="rating-count">{totalReviews} {t('doctors.reviews')}</span>
                         </div>
                     </div>
                 </div>
@@ -262,10 +378,71 @@ const DoctorProfile = () => {
                             </div>
                         </section>
 
+                        <section className="profile-section">
+                            <h2>{t('reviews.leave_review', 'Leave a review')}</h2>
+                            {!user && (
+                                <p className="review-auth-hint">
+                                    {t('reviews.auth_required', 'Please sign in to leave a review')}
+                                </p>
+                            )}
+                            <form className="review-form" onSubmit={handleSubmitReview}>
+                                <label className="review-label">{t('reviews.your_rating', 'Your rating')}</label>
+                                <div className="review-stars-input">
+                                    {[...Array(5)].map((_, i) => {
+                                        const value = i + 1;
+                                        return (
+                                            <button
+                                                type="button"
+                                                key={value}
+                                                className={`star-input ${value <= newRating ? 'filled' : ''}`}
+                                                onClick={() => {
+                                                    setNewRating(value);
+                                                    setReviewFormError(null);
+                                                }}
+                                                aria-label={`Rate ${value} star${value > 1 ? 's' : ''}`}
+                                            >
+                                                <FaStar />
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+
+                                <label className="review-label" htmlFor="review-comment">
+                                    {t('reviews.your_comment', 'Your comment')}
+                                </label>
+                                <textarea
+                                    id="review-comment"
+                                    value={newComment}
+                                    onChange={(e) => {
+                                        setNewComment(e.target.value.slice(0, 1000));
+                                        setReviewFormError(null);
+                                    }}
+                                    placeholder={t('reviews.comment_placeholder', 'Share your experience...')}
+                                    maxLength={1000}
+                                    rows={4}
+                                    disabled={!user}
+                                />
+
+                                {reviewFormError && <p className="review-error">{reviewFormError}</p>}
+
+                                <button
+                                    type="submit"
+                                    className="book-btn-lg"
+                                    disabled={isSubmittingReview || !user}
+                                >
+                                    {isSubmittingReview
+                                        ? t('reviews.submitting', 'Submitting...')
+                                        : t('reviews.submit', 'Post review')}
+                                </button>
+                            </form>
+                        </section>
+
                         <ReviewsList
-                            reviews={doctor.reviews}
-                            averageRating={doctor.rating}
-                            totalReviews={doctor.reviewsCount}
+                            reviews={reviews}
+                            averageRating={averageRating}
+                            totalReviews={totalReviews}
+                            isLoading={isReviewsLoading}
+                            error={reviewsError}
                         />
                     </div>
 
