@@ -6,6 +6,61 @@ import '../styles/BookingModal.css';
 import { UserContext } from '../context/UserContext';
 import { createAppointment } from '../api/appointments';
 
+const holidayCache = {};
+
+const formatIsoDate = (date) => date.toISOString().slice(0, 10);
+
+const computeEasterMonday = (year) => {
+    // Meeus/Jones/Butcher algorithm for Easter Sunday, then add one day
+    const a = year % 19;
+    const b = Math.floor(year / 100);
+    const c = year % 100;
+    const d = Math.floor(b / 4);
+    const e = b % 4;
+    const f = Math.floor((b + 8) / 25);
+    const g = Math.floor((b - f + 1) / 3);
+    const h = (19 * a + b - d - g + 15) % 30;
+    const i = Math.floor(c / 4);
+    const k = c % 4;
+    const l = (32 + 2 * e + 2 * i - h - k) % 7;
+    const m = Math.floor((a + 11 * h + 22 * l) / 451);
+    const month = Math.floor((h + l - 7 * m + 114) / 31) - 1; // 0-indexed
+    const day = ((h + l - 7 * m + 114) % 31) + 1;
+    const easterSunday = new Date(Date.UTC(year, month, day));
+    const easterMonday = new Date(easterSunday);
+    easterMonday.setUTCDate(easterSunday.getUTCDate() + 1);
+    return formatIsoDate(easterMonday);
+};
+
+const getItalianHolidays = (year) => {
+    const fixed = [
+        '01-01', // Capodanno
+        '01-06', // Epifania
+        '04-25', // Liberazione
+        '05-01', // Lavoro
+        '06-02', // Repubblica
+        '08-15', // Ferragosto
+        '11-01', // Ognissanti
+        '12-08', // Immacolata
+        '12-25', // Natale
+        '12-26', // Santo Stefano
+    ].map((d) => `${year}-${d}`);
+
+    const easterMonday = computeEasterMonday(year);
+    return new Set([...fixed, easterMonday]);
+};
+
+const isHolidayOrWeekend = (date) => {
+    const dayOfWeek = date.getDay();
+    if (dayOfWeek === 0 || dayOfWeek === 6) return true; // Sunday or Saturday
+
+    const year = date.getFullYear();
+    if (!holidayCache[year]) {
+        holidayCache[year] = getItalianHolidays(year);
+    }
+    return holidayCache[year].has(formatIsoDate(date));
+};
+
 const BookingModal = ({ isOpen, onClose, doctorName, doctorId, appointments = [], services = [], onAppointmentBooked }) => {
     const { t, i18n } = useTranslation();
     const { user } = useContext(UserContext);
@@ -15,12 +70,17 @@ const BookingModal = ({ isOpen, onClose, doctorName, doctorId, appointments = []
     const [selectedServiceId, setSelectedServiceId] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    // Generate next 7 days
+    // Generate next 7 available days (skip weekends and Italian holidays)
     const getNextDays = () => {
         const days = [];
-        for (let i = 0; i < 7; i++) {
+        let offset = 1; // start from tomorrow
+        while (days.length < 7 && offset < 60) {
             const date = new Date();
-            date.setDate(date.getDate() + i + 1); // Start from tomorrow
+            date.setDate(date.getDate() + offset);
+            offset += 1;
+
+            if (isHolidayOrWeekend(date)) continue;
+
             days.push({
                 day: date.toLocaleDateString(i18n.language, { weekday: 'short' }),
                 date: date.getDate(),
