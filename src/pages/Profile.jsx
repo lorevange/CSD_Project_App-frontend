@@ -40,13 +40,17 @@ const Profile = () => {
         }
     }, [user]);
 
+    const doctorId = (() => {
+        const candidate = Number(user?.doctor?.id ?? user?.doctor_id);
+        return Number.isFinite(candidate) ? candidate : null;
+    })();
+
     useEffect(() => {
         const fetchServices = async () => {
-            if (user?.profile !== 'doctor') return;
+            if (user?.profile !== 'doctor' || !doctorId) return;
             setServicesLoading(true);
             setServicesError(null);
             try {
-                const doctorId = Number(user.id);
                 const data = await getDoctorServices(doctorId, { includeInactive: true });
                 if (Array.isArray(data)) {
                     setServices(data);
@@ -63,7 +67,7 @@ const Profile = () => {
         };
 
         fetchServices();
-    }, [user, t]);
+    }, [user, t, doctorId]);
 
     if (!user) {
         return (
@@ -138,8 +142,7 @@ const Profile = () => {
             if (!Number.isFinite(parsedPrice)) {
                 throw new Error(t('profile.invalid_price', 'Please enter a valid price'));
             }
-            const doctorId = Number(user?.id);
-            if (!Number.isFinite(doctorId)) {
+            if (!doctorId) {
                 throw new Error(t('profile.missing_doctor_id', 'Doctor id not found'));
             }
             await createDoctorService({ name: serviceName, price: parsedPrice, doctorId });
@@ -161,7 +164,6 @@ const Profile = () => {
         setServiceError(null);
         try {
             await deactivateDoctorService(serviceId);
-            const doctorId = Number(user?.id);
             const refreshed = await getDoctorServices(doctorId, { includeInactive: true });
             setServices(Array.isArray(refreshed) ? refreshed : []);
         } catch (err) {
@@ -174,7 +176,6 @@ const Profile = () => {
         setServiceError(null);
         try {
             await activateDoctorService(serviceId);
-            const doctorId = Number(user?.id);
             const refreshed = await getDoctorServices(doctorId, { includeInactive: true });
             setServices(Array.isArray(refreshed) ? refreshed : []);
         } catch (err) {

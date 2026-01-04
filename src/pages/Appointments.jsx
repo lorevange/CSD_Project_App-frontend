@@ -121,7 +121,7 @@ const Appointments = () => {
                                                 </div>
                                                 <div className="appt-row">
                                                     <span className="label">{t('appointments.date', 'Date')}</span>
-                                                    <span>{new Date(appt.start_datetime).toLocaleString()}</span>
+                                                    <span>{new Date(appt.start_datetime).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}</span>
                                                 </div>
                                                 <div className="appt-row">
                                                     <span className="label">{t('appointments.status', 'Status')}</span>
@@ -170,7 +170,7 @@ const Appointments = () => {
                                                     </div>
                                                     <div className="appt-row">
                                                         <span className="label">{t('appointments.date', 'Date')}</span>
-                                                        <span>{new Date(appt.start_datetime).toLocaleString()}</span>
+                                                    <span>{new Date(appt.start_datetime).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}</span>
                                                     </div>
                                                     <div className="appt-row">
                                                         <span className="label">{t('appointments.status', 'Status')}</span>
