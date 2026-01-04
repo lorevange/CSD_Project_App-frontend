@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import Header from '../components/Header';
@@ -32,6 +32,7 @@ const DoctorProfile = () => {
     const [newComment, setNewComment] = useState('');
     const [isSubmittingReview, setIsSubmittingReview] = useState(false);
     const [reviewFormError, setReviewFormError] = useState(null);
+    const reviewsSectionRef = useRef(null);
 
     const adaptDoctorData = useCallback((data = {}) => {
         const buildLocalizedText = (value, fallbackIt = '', fallbackEn = '') => {
@@ -332,7 +333,24 @@ const DoctorProfile = () => {
                                     />
                                 );
                             })}
-                            <span className="rating-count">{totalReviews} {t('doctors.reviews')}</span>
+                            <span
+                                className="rating-count"
+                                role="button"
+                                tabIndex={0}
+                                onClick={() => {
+                                    const el = reviewsSectionRef.current;
+                                    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                }}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                        e.preventDefault();
+                                        const el = reviewsSectionRef.current;
+                                        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                    }
+                                }}
+                            >
+                                {totalReviews} {t('doctors.reviews')}
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -352,7 +370,7 @@ const DoctorProfile = () => {
                                         <li key={service.id ?? index} className="service-item">
                                             <FaCheckCircle className="check-icon" /> {service.name}
                                             {service.price != null && (
-                                                <span style={{ marginLeft: '8px', color: '#555' }}>€{service.price}</span>
+                                                <span className="service-price" style={{ marginLeft: '8px' }}>€{service.price}</span>
                                             )}
                                         </li>
                                     ))
@@ -437,13 +455,15 @@ const DoctorProfile = () => {
                             </form>
                         </section>
 
-                        <ReviewsList
-                            reviews={reviews}
-                            averageRating={averageRating}
-                            totalReviews={totalReviews}
-                            isLoading={isReviewsLoading}
-                            error={reviewsError}
-                        />
+                        <div ref={reviewsSectionRef}>
+                            <ReviewsList
+                                reviews={reviews}
+                                averageRating={averageRating}
+                                totalReviews={totalReviews}
+                                isLoading={isReviewsLoading}
+                                error={reviewsError}
+                            />
+                        </div>
                     </div>
 
                     <div className="profile-right">
