@@ -1,113 +1,16 @@
-.footer {
+.footer-simple {
     background-color: var(--bg-main);
     border-top: 1px solid var(--border-color);
-    padding: var(--spacing-xxl) 0 var(--spacing-lg);
+    padding: var(--spacing-lg) var(--spacing-md);
     margin-top: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.footer-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: var(--spacing-xl);
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 var(--spacing-md);
-}
-
-.footer-section h3 {
-    color: var(--color-primary);
-    margin-bottom: var(--spacing-md);
-}
-
-.footer-section h4 {
-    color: var(--text-main);
-    margin-bottom: var(--spacing-md);
-}
-
-.footer-section ul li {
-    margin-bottom: var(--spacing-sm);
-    color: var(--text-light);
-    cursor: pointer;
-    transition: color 0.2s;
-}
-
-.footer-section ul li:hover {
-    color: var(--color-primary);
-}
-
-.footer-bottom {
-    text-align: center;
-    margin-top: var(--spacing-xl);
-    padding-top: var(--spacing-lg);
-    border-top: 1px solid var(--divider-color);
+.footer-text {
     color: var(--text-light);
     font-size: var(--font-size-sm);
-}
-
-.accordion-icon {
-    display: none;
-    /* Hidden on desktop */
-}
-
-/* Mobile Accordion Styles */
-@media (max-width: 768px) {
-    .footer-container {
-        display: flex;
-        flex-direction: column;
-        gap: 0;
-        /* Remove gap, handle with padding in sections */
-    }
-
-    .footer-section {
-        border-bottom: 1px solid var(--border-color);
-        padding: var(--spacing-md) 0;
-    }
-
-    .footer-section:last-child {
-        border-bottom: none;
-    }
-
-    .footer-section h3 {
-        margin-bottom: var(--spacing-sm);
-    }
-
-    /* Accordion Header */
-    .accordion-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        cursor: pointer;
-        margin-bottom: 0;
-        user-select: none;
-        -webkit-tap-highlight-color: transparent;
-    }
-
-    .accordion-icon {
-        display: block;
-        font-size: 12px;
-        transition: transform 0.3s ease;
-        color: var(--text-light);
-    }
-
-    .accordion-icon.open {
-        transform: rotate(180deg);
-    }
-
-    /* Accordion Content */
-    .accordion-content {
-        max-height: 0;
-        opacity: 0;
-        overflow: hidden;
-        transition: all 0.3s ease-in-out;
-        margin-top: 0;
-        padding-left: var(--spacing-sm);
-        /* Indent list items */
-    }
-
-    .accordion-content.open {
-        max-height: 300px;
-        /* Sufficient height for content */
-        opacity: 1;
-        margin-top: var(--spacing-sm);
-    }
+    text-align: center;
+    margin: 0;
 }
