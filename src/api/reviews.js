@@ -10,6 +10,10 @@ export async function listReviewsForDoctor(doctorId, { skip = 0, limit = 50 } = 
     return apiRequest(path, { method: 'GET' });
 }
 
+export async function getReviewSummary(doctorId) {
+    return apiRequest(`/doctors/${doctorId}/reviews/summary`, { method: 'GET' });
+}
+
 export async function createReview(doctorId, { rating, comment }) {
     return apiRequest(`/doctors/${doctorId}/reviews`, {
         method: 'POST',

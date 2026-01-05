@@ -57,6 +57,40 @@
     cursor: pointer;
 }
 
+.review-summary {
+    margin-top: var(--spacing-md);
+    padding: var(--spacing-md);
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-sm);
+}
+
+.review-summary-title {
+    margin: 0 0 var(--spacing-xs);
+    color: var(--text-main);
+    font-size: var(--font-size-md);
+}
+
+.review-summary-text {
+    margin: 0 0 var(--spacing-xs);
+    color: var(--text-main);
+    line-height: 1.5;
+}
+
+.review-summary-meta {
+    margin: 0;
+    color: var(--text-light);
+    font-size: var(--font-size-sm);
+}
+
+.review-summary-error {
+    margin: 0;
+    color: var(--color-accent);
+    font-weight: 600;
+    font-size: var(--font-size-sm);
+}
+
 .profile-content {
     display: grid;
     grid-template-columns: 2fr 1fr;
