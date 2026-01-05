@@ -33,6 +33,12 @@ const Register = () => {
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [passwordError, setPasswordError] = useState(null);
+    const [firstNameError, setFirstNameError] = useState(null);
+    const [lastNameError, setLastNameError] = useState(null);
+    const [identityNumberError, setIdentityNumberError] = useState(null);
+    const [emailError, setEmailError] = useState(null);
+    const [phoneError, setPhoneError] = useState(null);
+
     const navigate = useNavigate();
 
     const handleChange = (e) => {
@@ -40,8 +46,28 @@ const Register = () => {
         const nextData = { ...formData, [name]: value };
         setFormData(nextData);
 
-        if (name === 'password' || name === 'confirm_password') {
-            setPasswordError(validatePassword(nextData));
+        switch (name) {
+            case 'password':
+            case 'confirm_password':
+                setPasswordError(validatePassword(nextData));
+                break;
+            case 'first_name':
+                setFirstNameError(validateFirstName(value));
+                break;
+            case 'last_name':
+                setLastNameError(validateLastName(value));
+                break;
+            case 'identity_number':
+                setIdentityNumberError(validateIdentityNumber(value));
+                break;
+            case 'email':
+                setEmailError(validateEmail(value));
+                break;
+            case 'phone':
+                setPhoneError(validatePhone(value));
+                break;
+            default:
+                break;
         }
     };
 
@@ -68,15 +94,73 @@ const Register = () => {
         return null;
     };
 
+    const validateFirstName = (value) => {
+        if (!value || value.length < 2) {
+            return t('auth.first_name_length', 'First name must be at least 2 characters.');
+        }
+        if (/[^a-zA-ZÀ-ÿ\s]/.test(value)) {
+            return t('auth.first_name_invalid', 'First name cannot contain numbers or special characters.');
+        }
+        return null;
+    };
+
+    const validateLastName = (value) => {
+        if (!value || value.length < 2) {
+            return t('auth.last_name_length', 'Last name must be at least 2 characters.');
+        }
+        if (/[^a-zA-ZÀ-ÿ\s]/.test(value)) {
+            return t('auth.last_name_invalid', 'Last name cannot contain numbers or special characters.');
+        }
+        return null;
+    };
+    const validateIdentityNumber = (value) => {
+        if (!value || value.length !== 16) {
+            return t('auth.identity_number_length', 'Identity Number must be 16 characters.');
+        }
+        if (!/^[A-Z0-9]+$/i.test(value)) {
+            return t('auth.identity_number_invalid', 'Identity Number can only contain letters and numbers.');
+        } 
+    return null;
+    };
+    const validateEmail = (value) => {
+        if (value.length < 3) {
+            return t('auth.email_length', 'Email must be at least 3 characters.');
+        }
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
+        if (!emailRegex.test(value)) {
+            return t('auth.email_invalid', 'Please enter a valid email address.');
+        }
+        return null;
+    };
+    const validatePhone = (value) => {
+        if (!value) {
+            return t('auth.phone_required', 'Phone number is required.');
+        }
+        if (!/^\d{10}$/.test(value)) {
+            return t('auth.phone_invalid', 'Phone number must be exactly 10 digits and contain only numbers.');
+        }
+        return null;
+    };
+
+
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const errors = {
+            password: validatePassword(),
+            first_name: validateFirstName(formData.first_name),
+            last_name: validateLastName(formData.last_name),
+            identity_number: validateIdentityNumber(formData.identity_number),
+            email: validateEmail(formData.email),
+            phone: validatePhone(formData.phone),
+        };
 
-        const passwordError = validatePassword();
-        if (passwordError) {
-            alert(passwordError);
-            return;
+        for (const key in errors) {
+            if (errors[key]) {
+                alert(errors[key]);
+                return; 
+            }
         }
-
         setIsSubmitting(true);
 
         try {
@@ -128,6 +212,11 @@ const Register = () => {
                                 onChange={handleChange}
                                 required
                             />
+                            {firstNameError && (
+                                <p style={{ color: 'red', fontSize: '0.9rem', marginTop: '4px' }}>
+                                    {firstNameError}
+                                </p>
+                            )}
                         </div>
                         <div className="form-group">
                             <label>{t('auth.last_name')}</label>
@@ -138,6 +227,11 @@ const Register = () => {
                                 onChange={handleChange}
                                 required
                             />
+                            {lastNameError && (
+                                <p style={{ color: 'red', fontSize: '0.9rem', marginTop: '4px' }}>
+                                    {lastNameError}
+                                </p>
+                            )}
                         </div>
                         <div className="form-group">
                             <label>{t('auth.identity_number')}</label>
@@ -148,6 +242,11 @@ const Register = () => {
                                 onChange={handleChange}
                                 required
                             />
+                            {identityNumberError && (
+                                <p style={{ color: 'red', fontSize: '0.9rem', marginTop: '4px' }}>
+                                    {identityNumberError}
+                                </p>
+                            )}
                         </div>
                         <div className="form-group">
                             <label>{t('auth.email')}</label>
@@ -158,6 +257,11 @@ const Register = () => {
                                 onChange={handleChange}
                                 required
                             />
+                            {emailError && (
+                                <p style={{ color: 'red', fontSize: '0.9rem', marginTop: '4px' }}>
+                                    {emailError}
+                                </p>
+                            )}
                         </div>
                         <div className="form-group">
                             <label>{t('auth.phone', 'Phone Number')}</label>
@@ -169,6 +273,11 @@ const Register = () => {
                                 onChange={handleChange}
                                 required
                             />
+                            {phoneError && (
+                                <p style={{ color: 'red', fontSize: '0.9rem', marginTop: '4px' }}>
+                                    {phoneError}
+                                </p>
+                            )}
                         </div>
                         <div className="form-group">
                             <label>{t('auth.password')}</label>
