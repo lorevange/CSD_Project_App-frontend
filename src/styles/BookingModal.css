@@ -15,8 +15,8 @@
 .booking-modal {
     background-color: var(--card-bg);
     border-radius: var(--radius-lg);
-    width: 90%;
-    max-width: 500px;
+    width: 92%;
+    max-width: 560px;
     box-shadow: var(--shadow-lg);
     overflow: hidden;
     border: 1px solid var(--border-color);
@@ -88,7 +88,7 @@
 
 .dates-grid {
     display: flex;
-    gap: var(--spacing-sm);
+    gap: calc(var(--spacing-sm) * 0.6);
     overflow-x: auto;
     padding-bottom: var(--spacing-xs);
     -webkit-overflow-scrolling: touch;

@@ -21,6 +21,33 @@
     gap: var(--spacing-md);
 }
 
+.results-spinner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-xxl);
+    background: var(--bg-light);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    color: var(--text-main);
+}
+
+.spinner-ring {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 3px solid var(--border-color);
+    border-top-color: var(--color-primary);
+    border-right-color: var(--color-primary-dark, var(--color-primary));
+    animation: spin-ring 0.9s linear infinite;
+}
+
+@keyframes spin-ring {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
 .no-results {
     text-align: center;
     padding: var(--spacing-xxl);

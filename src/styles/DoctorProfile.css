@@ -97,6 +97,15 @@
     margin-right: var(--spacing-sm);
 }
 
+.service-item span {
+    color: var(--text-main);
+}
+
+.service-item .service-price {
+    color: var(--color-secondary);
+    font-weight: 600;
+}
+
 .map-placeholder {
     background-color: var(--input-bg);
     border: 1px solid var(--border-color);

@@ -74,7 +74,19 @@
     "reviews": {
         "title": "Patient Reviews",
         "average": "Average Rating",
-        "no_reviews": "No reviews yet."
+        "no_reviews": "No reviews yet.",
+        "anonymous": "Anonymous user",
+        "loading": "Loading reviews...",
+        "load_error": "Unable to load reviews",
+        "leave_review": "Leave a review",
+        "your_rating": "Your rating",
+        "your_comment": "Your comment",
+        "comment_placeholder": "Share your experience...",
+        "submit": "Post review",
+        "submitting": "Submitting...",
+        "auth_required": "Please sign in to leave a review",
+        "comment_required": "Please add a comment",
+        "submit_error": "Unable to submit review"
     },
     "common": {
         "cancel": "Cancel",
