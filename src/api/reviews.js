@@ -10,8 +10,13 @@ export async function listReviewsForDoctor(doctorId, { skip = 0, limit = 50 } = 
     return apiRequest(path, { method: 'GET' });
 }
 
-export async function getReviewSummary(doctorId) {
-    return apiRequest(`/doctors/${doctorId}/reviews/summary`, { method: 'GET' });
+export async function getReviewSummary(doctorId, { language } = {}) {
+    const params = new URLSearchParams();
+    if (language) params.append('language', language);
+    const query = params.toString();
+    const path = query ? `/doctors/${doctorId}/reviews/summary?${query}` : `/doctors/${doctorId}/reviews/summary`;
+
+    return apiRequest(path, { method: 'GET' });
 }
 
 export async function createReview(doctorId, { rating, comment }) {

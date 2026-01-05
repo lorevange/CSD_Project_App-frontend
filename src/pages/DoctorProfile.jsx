@@ -232,7 +232,7 @@ const DoctorProfile = () => {
         setIsSummaryLoading(true);
         setReviewSummaryError(null);
         try {
-            const data = await getReviewSummary(id);
+            const data = await getReviewSummary(id, { language: i18n.language });
             setReviewSummary(typeof data?.summary === 'string' ? data.summary : '');
             setSummaryWordCount(Number.isFinite(Number(data?.word_count)) ? Number(data.word_count) : 0);
         } catch (err) {
@@ -241,7 +241,7 @@ const DoctorProfile = () => {
         } finally {
             setIsSummaryLoading(false);
         }
-    }, [id, t]);
+    }, [id, i18n.language, t]);
 
     useEffect(() => {
         fetchReviewSummary();
@@ -393,11 +393,6 @@ const DoctorProfile = () => {
                             {!isSummaryLoading && !reviewSummaryError && !reviewSummary && (
                                 <p className="review-summary-meta">
                                     {t('reviews.summary_empty', 'No reviews summary available yet.')}
-                                </p>
-                            )}
-                            {!isSummaryLoading && summaryWordCount > 0 && (
-                                <p className="review-summary-meta">
-                                    {t('reviews.summary_word_count', { count: summaryWordCount, defaultValue: `${summaryWordCount} words` })}
                                 </p>
                             )}
                         </div>

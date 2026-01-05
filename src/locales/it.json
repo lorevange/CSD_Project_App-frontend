@@ -88,7 +88,9 @@
         "submitting": "Invio in corso...",
         "auth_required": "Accedi per lasciare una recensione",
         "comment_required": "Inserisci un commento",
-        "submit_error": "Impossibile inviare la recensione"
+        "submit_error": "Impossibile inviare la recensione",
+        "summary_title": "Riepilogo delle recensioni",
+        "summary_loading": "Generazione riepilogo..."
     },
     "common": {
         "cancel": "Annulla",
