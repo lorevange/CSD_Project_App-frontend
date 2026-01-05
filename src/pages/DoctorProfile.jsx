@@ -10,7 +10,7 @@ import '../styles/DoctorProfile.css';
 import Map from '../components/Map';
 import { getDoctorById } from '../api/doctors';
 import { getAppointments } from '../api/appointments';
-import { createReview, listReviewsForDoctor } from '../api/reviews';
+import { createReview, getReviewSummary, listReviewsForDoctor } from '../api/reviews';
 import { normalizePhotoToDataUrl } from '../utils/photo';
 import { UserContext } from '../context/UserContext';
 
@@ -28,6 +28,10 @@ const DoctorProfile = () => {
     const [reviews, setReviews] = useState([]);
     const [isReviewsLoading, setIsReviewsLoading] = useState(false);
     const [reviewsError, setReviewsError] = useState(null);
+    const [reviewSummary, setReviewSummary] = useState('');
+    const [summaryWordCount, setSummaryWordCount] = useState(0);
+    const [isSummaryLoading, setIsSummaryLoading] = useState(false);
+    const [reviewSummaryError, setReviewSummaryError] = useState(null);
     const [newRating, setNewRating] = useState(0);
     const [newComment, setNewComment] = useState('');
     const [isSubmittingReview, setIsSubmittingReview] = useState(false);
@@ -224,6 +228,25 @@ const DoctorProfile = () => {
         fetchReviews();
     }, [fetchReviews]);
 
+    const fetchReviewSummary = useCallback(async () => {
+        setIsSummaryLoading(true);
+        setReviewSummaryError(null);
+        try {
+            const data = await getReviewSummary(id);
+            setReviewSummary(typeof data?.summary === 'string' ? data.summary : '');
+            setSummaryWordCount(Number.isFinite(Number(data?.word_count)) ? Number(data.word_count) : 0);
+        } catch (err) {
+            console.error('Error fetching review summary:', err);
+            setReviewSummaryError(err.message || t('reviews.summary_error', 'Unable to load review summary'));
+        } finally {
+            setIsSummaryLoading(false);
+        }
+    }, [id, t]);
+
+    useEffect(() => {
+        fetchReviewSummary();
+    }, [fetchReviewSummary]);
+
     const doctorAppointments = useMemo(() => {
         const docId = Number(doctor?.id);
         if (!Number.isFinite(docId)) return [];
@@ -351,6 +374,32 @@ const DoctorProfile = () => {
                             >
                                 {totalReviews} {t('doctors.reviews')}
                             </span>
+                        </div>
+                        <div className="review-summary">
+                            <h3 className="review-summary-title">
+                                {t('reviews.summary_title', 'Review summary')}
+                            </h3>
+                            {isSummaryLoading && (
+                                <p className="review-summary-meta">
+                                    {t('reviews.summary_loading', 'Generating summary...')}
+                                </p>
+                            )}
+                            {!isSummaryLoading && reviewSummaryError && (
+                                <p className="review-summary-error">{reviewSummaryError}</p>
+                            )}
+                            {!isSummaryLoading && !reviewSummaryError && reviewSummary && (
+                                <p className="review-summary-text">{reviewSummary}</p>
+                            )}
+                            {!isSummaryLoading && !reviewSummaryError && !reviewSummary && (
+                                <p className="review-summary-meta">
+                                    {t('reviews.summary_empty', 'No reviews summary available yet.')}
+                                </p>
+                            )}
+                            {!isSummaryLoading && summaryWordCount > 0 && (
+                                <p className="review-summary-meta">
+                                    {t('reviews.summary_word_count', { count: summaryWordCount, defaultValue: `${summaryWordCount} words` })}
+                                </p>
+                            )}
                         </div>
                     </div>
                 </div>
