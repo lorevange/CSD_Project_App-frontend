@@ -20,7 +20,7 @@
     "doctors": {
         "title": "Featured Doctors",
         "rating": "Rating",
-        "reviews": "reviews",
+        "reviews": "Reviews",
         "price": "Price",
         "book": "Book Visit"
     },

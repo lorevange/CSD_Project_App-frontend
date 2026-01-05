@@ -20,9 +20,9 @@
     "doctors": {
         "title": "Dottori in evidenza",
         "rating": "Valutazione",
-        "reviews": "recensioni",
+        "reviews": "Recensioni",
         "price": "Prezzo",
-        "book": "Prenota Visita"
+        "book": "Prenota visita"
     },
     "footer": {
         "about": "Chi Siamo",
