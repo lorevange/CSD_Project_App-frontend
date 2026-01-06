@@ -81,8 +81,7 @@ const Register = () => {
 
         try {
             await registerUser(userType, formData);
-            alert(t('auth.registration_success'));
-            navigate('/login');
+            navigate('/verify-email', { state: { email: formData.email } });
         } catch (error) {
             console.error('Registration failed', error);
             const message = error?.message;

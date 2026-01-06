@@ -29,6 +29,13 @@
     margin-bottom: var(--spacing-lg);
 }
 
+.auth-subtitle {
+    text-align: center;
+    color: var(--text-light);
+    margin: -4px 0 var(--spacing-lg);
+    font-size: var(--font-size-sm);
+}
+
 .auth-tabs {
     display: flex;
     margin-bottom: var(--spacing-lg);
@@ -122,6 +129,35 @@
     font-weight: bold;
 }
 
+.code-input {
+    text-align: center;
+    letter-spacing: 0.25em;
+    font-weight: 600;
+}
+
+.code-input::placeholder {
+    letter-spacing: normal;
+    color: var(--text-light);
+}
+
+.verification-actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-md);
+}
+
+.auth-btn.secondary {
+    background-color: transparent;
+    color: var(--color-primary);
+    border: 1px solid var(--color-primary);
+}
+
+.auth-btn.secondary:hover {
+    background-color: var(--color-primary);
+    color: var(--text-white);
+}
+
 @media (max-width: 480px) {
     .auth-container {
         padding: var(--spacing-md);
@@ -142,4 +178,19 @@
         background-color: var(--card-bg);
         /* Make whole page white on mobile */
     }
+}
+
+@media (min-width: 520px) {
+    .verification-actions {
+        flex-direction: row;
+    }
+}
+
+.verification-note {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: var(--spacing-xs);
+    color: var(--text-light);
+    font-size: var(--font-size-sm);
 }
