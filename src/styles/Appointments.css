@@ -1,6 +1,8 @@
 .appointments-page {
     background: linear-gradient(135deg, var(--hero-gradient-start), var(--hero-gradient-end));
     min-height: 100vh;
+    display: flex;
+    flex-direction: column;
     color: var(--text-main);
     transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
@@ -9,6 +11,7 @@
     max-width: 900px;
     margin: 0 auto;
     padding: var(--spacing-xxl) var(--spacing-lg);
+    flex: 1;
 }
 
 .appointments-grid {
