@@ -10,6 +10,7 @@ import '../styles/Home.css';
 const Home = () => {
   const { t, i18n } = useTranslation();
 
+  // Funzione per associare l'icona alla specializzazione
   const getIconForSpecialization = (iconName) => {
     switch (iconName) {
       case 'heartbeat': return <FaHeartbeat />;
@@ -39,11 +40,20 @@ const Home = () => {
         </div>
       </section>
 
+      {/* --- GRID DELLE SPECIALIZZAZIONI --- */}
       <section className="specializations-section container">
         <h2 className="section-title">{t('specializations.title')}</h2>
         <div className="specializations-grid">
           {specializations.slice(0, 12).map((spec, index) => (
-            <div key={index} className="specialization-card">
+            <div
+              key={index}
+              className="specialization-card"
+              onClick={() => {
+                // Naviga alla pagina dei dottori con la specializzazione selezionata
+                const query = spec.name[i18n.language];
+                window.location.href = `/doctors/search?query=${encodeURIComponent(query)}&city=`;
+              }}
+            >
               <div className="spec-icon">{getIconForSpecialization(spec.icon)}</div>
               <h3 className="spec-name">{spec.name[i18n.language]}</h3>
             </div>
