@@ -110,7 +110,11 @@ const DoctorProfile = () => {
 
         const hasLatitude = data.latitude !== undefined && data.latitude !== null;
         const hasLongitude = data.longitude !== undefined && data.longitude !== null;
-        const resolvedPhoto = normalizePhotoToDataUrl(data?.photo, 'image/png') || data?.image || data?.photo_url || data?.avatar || 'https://via.placeholder.com/150';
+        const resolvedPhoto = normalizePhotoToDataUrl(data?.photo, 'image/png')
+            || data?.image
+            || data?.photo_url
+            || data?.avatar
+            || 'https://picsum.photos/200/300';
         const ratingValue = data.average_rating ?? data.avg_rating ?? data.rating;
         const reviewsTotal = data.reviewsCount ?? data.reviews_count ?? data.ratings_count ?? (Array.isArray(data.reviews) ? data.reviews.length : undefined);
 
