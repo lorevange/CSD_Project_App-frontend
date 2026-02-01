@@ -28,7 +28,7 @@ const DoctorProfile = () => {
     const [reviews, setReviews] = useState([]);
     const [isReviewsLoading, setIsReviewsLoading] = useState(false);
     const [reviewsError, setReviewsError] = useState(null);
-    const [reviewSummary, setReviewSummary] = useState('');
+    const [reviewSummaryByLanguage, setReviewSummaryByLanguage] = useState({ en: '', it: '' });
     const [summaryWordCount, setSummaryWordCount] = useState(0);
     const [isSummaryLoading, setIsSummaryLoading] = useState(false);
     const [reviewSummaryError, setReviewSummaryError] = useState(null);
@@ -134,52 +134,6 @@ const DoctorProfile = () => {
         };
     }, [id, t]);
 
-    useEffect(() => {
-        const fetchDoctor = async () => {
-            setIsLoading(true);
-            setError(null);
-            try {
-                const data = await getDoctorById(id);
-                setDoctor(adaptDoctorData(data));
-            } catch (err) {
-                console.error('Error fetching doctor profile:', err);
-                setError(err.message || t('doctor_profile.load_error', 'Unable to load doctor details'));
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchDoctor();
-    }, [id, adaptDoctorData, t]);
-
-    const fetchAppointments = useCallback(async () => {
-        setIsAppointmentsLoading(true);
-        setAppointmentsError(null);
-        try {
-            const data = await getAppointments({ doctorId: id, status: 'scheduled', startFrom: new Date().toISOString() });
-            const normalized = Array.isArray(data) ? data.map((appt) => ({
-                id: appt.id,
-                doctorId: appt.doctor_id,
-                userId: appt.user_id,
-                startDatetime: appt.start_datetime,
-                endDatetime: appt.end_datetime,
-                examinationType: appt.examination_type,
-                notes: appt.notes,
-                status: appt.status,
-            })) : [];
-            setAppointments(normalized);
-        } catch (err) {
-            console.error('Error fetching appointments:', err);
-            setAppointmentsError(err.message || t('appointments.load_error', 'Unable to load appointments'));
-        } finally {
-            setIsAppointmentsLoading(false);
-        }
-    }, [id, t]);
-
-    useEffect(() => {
-        fetchAppointments();
-    }, [fetchAppointments]);
-
     const normalizeReview = useCallback((review) => {
         const ratingValue = Number(review?.rating);
         const clampedRating = Number.isFinite(ratingValue)
@@ -209,6 +163,44 @@ const DoctorProfile = () => {
         };
     }, [t]);
 
+    const fetchDoctor = useCallback(async () => {
+        setIsLoading(true);
+        setError(null);
+        try {
+            const data = await getDoctorById(id);
+            setDoctor(adaptDoctorData(data));
+        } catch (err) {
+            console.error('Error fetching doctor profile:', err);
+            setError(err.message || t('doctor_profile.load_error', 'Unable to load doctor details'));
+        } finally {
+            setIsLoading(false);
+        }
+    }, [adaptDoctorData, id, t]);
+
+    const fetchAppointments = useCallback(async () => {
+        setIsAppointmentsLoading(true);
+        setAppointmentsError(null);
+        try {
+            const data = await getAppointments({ doctorId: id, status: 'scheduled', startFrom: new Date().toISOString() });
+            const normalized = Array.isArray(data) ? data.map((appt) => ({
+                id: appt.id,
+                doctorId: appt.doctor_id,
+                userId: appt.user_id,
+                startDatetime: appt.start_datetime,
+                endDatetime: appt.end_datetime,
+                examinationType: appt.examination_type,
+                notes: appt.notes,
+                status: appt.status,
+            })) : [];
+            setAppointments(normalized);
+        } catch (err) {
+            console.error('Error fetching appointments:', err);
+            setAppointmentsError(err.message || t('appointments.load_error', 'Unable to load appointments'));
+        } finally {
+            setIsAppointmentsLoading(false);
+        }
+    }, [id, t]);
+
     const fetchReviews = useCallback(async () => {
         setIsReviewsLoading(true);
         setReviewsError(null);
@@ -224,16 +216,34 @@ const DoctorProfile = () => {
         }
     }, [id, normalizeReview, t]);
 
-    useEffect(() => {
-        fetchReviews();
-    }, [fetchReviews]);
+    const parseBilingualSummary = useCallback((rawSummary) => {
+        if (typeof rawSummary !== 'string') return { en: '', it: '' };
+
+        const text = rawSummary.trim();
+        if (!text) return { en: '', it: '' };
+
+        const enMatch = text.match(/EN:\s*([\s\S]*?)(?:\s+IT:|$)/i);
+        const itMatch = text.match(/IT:\s*([\s\S]*)/i);
+        const en = enMatch ? enMatch[1].trim() : '';
+        const it = itMatch ? itMatch[1].trim() : '';
+
+        if (!en && !it) {
+            return { en: text, it: text };
+        }
+
+        return {
+            en: en || it,
+            it: it || en,
+        };
+    }, []);
 
     const fetchReviewSummary = useCallback(async () => {
         setIsSummaryLoading(true);
         setReviewSummaryError(null);
         try {
-            const data = await getReviewSummary(id, { language: i18n.language });
-            setReviewSummary(typeof data?.summary === 'string' ? data.summary : '');
+            const data = await getReviewSummary(id);
+            const summaryText = typeof data?.summary === 'string' ? data.summary : '';
+            setReviewSummaryByLanguage(parseBilingualSummary(summaryText));
             setSummaryWordCount(Number.isFinite(Number(data?.word_count)) ? Number(data.word_count) : 0);
         } catch (err) {
             console.error('Error fetching review summary:', err);
@@ -241,11 +251,31 @@ const DoctorProfile = () => {
         } finally {
             setIsSummaryLoading(false);
         }
-    }, [id, i18n.language, t]);
+    }, [id, parseBilingualSummary, t]);
 
     useEffect(() => {
-        fetchReviewSummary();
-    }, [fetchReviewSummary]);
+        let isActive = true;
+        const loadSequentially = async () => {
+            await fetchDoctor();
+            if (!isActive) return;
+            await fetchAppointments();
+            if (!isActive) return;
+            await fetchReviews();
+            if (!isActive) return;
+            await fetchReviewSummary();
+        };
+
+        loadSequentially();
+        return () => {
+            isActive = false;
+        };
+    }, [id]);
+
+    const activeReviewSummary = useMemo(() => {
+        const preferred = reviewSummaryByLanguage[i18n.language];
+        if (preferred) return preferred;
+        return reviewSummaryByLanguage.en || reviewSummaryByLanguage.it || '';
+    }, [i18n.language, reviewSummaryByLanguage]);
 
     const doctorAppointments = useMemo(() => {
         const docId = Number(doctor?.id);
@@ -293,7 +323,8 @@ const DoctorProfile = () => {
             });
             setNewRating(0);
             setNewComment('');
-            await fetchReviews();
+            fetchReviews();
+            fetchReviewSummary();
         } catch (err) {
             console.error('Error submitting review:', err);
             setReviewFormError(err.message || t('reviews.submit_error', 'Unable to submit review'));
@@ -387,10 +418,10 @@ const DoctorProfile = () => {
                             {!isSummaryLoading && reviewSummaryError && (
                                 <p className="review-summary-error">{reviewSummaryError}</p>
                             )}
-                            {!isSummaryLoading && !reviewSummaryError && reviewSummary && (
-                                <p className="review-summary-text">{reviewSummary}</p>
+                            {!isSummaryLoading && !reviewSummaryError && activeReviewSummary && (
+                                <p className="review-summary-text">{activeReviewSummary}</p>
                             )}
-                            {!isSummaryLoading && !reviewSummaryError && !reviewSummary && (
+                            {!isSummaryLoading && !reviewSummaryError && !activeReviewSummary && (
                                 <p className="review-summary-meta">
                                     {t('reviews.summary_empty', 'No reviews summary available yet.')}
                                 </p>

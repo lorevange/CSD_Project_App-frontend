@@ -125,7 +125,10 @@ const Appointments = () => {
                                                 </div>
                                                 <div className="appt-row">
                                                     <span className="label">{t('appointments.status', 'Status')}</span>
-                                                    <span>{appt.status == 'scheduled' ? 'Scheduled' : 'Cancelled'}</span>
+                                                    <span>{appt.status == 'scheduled'
+                                                        ? t('appointments.status_scheduled', 'Scheduled')
+                                                        : t('appointments.status_cancelled', 'Cancelled')}
+                                                    </span>
                                                 </div>
                                             </div>
                                             {!isCancelled && (
@@ -174,7 +177,10 @@ const Appointments = () => {
                                                     </div>
                                                     <div className="appt-row">
                                                         <span className="label">{t('appointments.status', 'Status')}</span>
-                                                        <span>{appt.status == 'scheduled' ? 'Scheduled' : 'Cancelled'}</span>
+                                                        <span>{appt.status == 'scheduled'
+                                                            ? t('appointments.status_scheduled', 'Scheduled')
+                                                            : t('appointments.status_cancelled', 'Cancelled')}
+                                                        </span>
                                                     </div>
                                                 </div>
                                                 {!isCancelled && (

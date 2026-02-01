@@ -15,3 +15,39 @@ export async function getDoctorById(doctorId) {
         method: 'GET',
     });
 }
+
+export async function getDoctorProfileBundle(
+    doctorId,
+    {
+        appointmentsStatus,
+        appointmentsStartFrom,
+        appointmentsStartTo,
+        reviewsSkip = 0,
+        reviewsLimit = 50,
+        reviewSummaryLanguage,
+    } = {}
+) {
+    return apiRequest('/doctors/profile', {
+        method: 'POST',
+        body: JSON.stringify({
+            doctorId,
+            include: ['appointments', 'reviews', 'reviewSummary'],
+            appointments: {
+                status: appointmentsStatus,
+                startFrom: appointmentsStartFrom instanceof Date
+                    ? appointmentsStartFrom.toISOString()
+                    : appointmentsStartFrom,
+                startTo: appointmentsStartTo instanceof Date
+                    ? appointmentsStartTo.toISOString()
+                    : appointmentsStartTo,
+            },
+            reviews: {
+                skip: reviewsSkip,
+                limit: reviewsLimit,
+            },
+            reviewSummary: {
+                language: reviewSummaryLanguage,
+            },
+        }),
+    });
+}
