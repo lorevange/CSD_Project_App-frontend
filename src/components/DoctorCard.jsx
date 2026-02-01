@@ -51,7 +51,18 @@ const DoctorCard = ({ doctor, isHighlighted, onSelect }) => {
             }}
         >
             <div className="doctor-image-container">
-                <img src={doctor.image} alt={doctor.name} className="doctor-image" />
+                {doctor.image ? (
+                    <img src={doctor.image} alt={doctor.name} className="doctor-image" />
+                ) : (
+                    <div className="doctor-avatar" role="img" aria-label={doctor.name}>
+                        {doctor.name
+                            .split(' ')
+                            .filter(Boolean)
+                            .slice(0, 2)
+                            .map((part) => part.charAt(0).toUpperCase())
+                            .join('')}
+                    </div>
+                )}
             </div>
             <div className="doctor-info">
                 <h3 className="doctor-name">
