@@ -114,7 +114,7 @@ const DoctorProfile = () => {
             || data?.image
             || data?.photo_url
             || data?.avatar
-            || 'https://picsum.photos/200/300';
+            || null;
         const ratingValue = data.average_rating ?? data.avg_rating ?? data.rating;
         const reviewsTotal = data.reviewsCount ?? data.reviews_count ?? data.ratings_count ?? (Array.isArray(data.reviews) ? data.reviews.length : undefined);
 
@@ -370,7 +370,18 @@ const DoctorProfile = () => {
             <div className="container profile-container">
                 <div className="profile-header">
                     <div className="profile-image-wrapper">
-                        <img src={doctor.image} alt={doctor.name} className="profile-image" />
+                        {doctor.image ? (
+                            <img src={doctor.image} alt={doctor.name} className="profile-image" />
+                        ) : (
+                            <div className="profile-image profile-image-fallback" role="img" aria-label={doctor.name}>
+                                {doctor.name
+                                    .split(' ')
+                                    .filter(Boolean)
+                                    .slice(0, 2)
+                                    .map((part) => part.charAt(0).toUpperCase())
+                                    .join('')}
+                            </div>
+                        )}
                     </div>
                     <div className="profile-main-info">
                         <h1 className="profile-name">{doctor.name}</h1>

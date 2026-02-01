@@ -59,7 +59,7 @@ const SearchResults = () => {
                     reviewsCount: Number.isFinite(Number(doc.reviews_count ?? doc.reviewsCount ?? doc.reviews_total))
                         ? Number(doc.reviews_count ?? doc.reviewsCount ?? doc.reviews_total)
                         : (Array.isArray(doc.reviews) ? doc.reviews.length : 0),
-                    image: normalizePhotoToDataUrl(doc?.photo, 'image/png') || 'https://picsum.photos/200/300',
+                    image: normalizePhotoToDataUrl(doc?.photo, 'image/png') || null,
                     services: doc.services,
                     price: 0,
                     reviews: []
