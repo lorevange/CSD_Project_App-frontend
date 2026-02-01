@@ -284,18 +284,18 @@ const DoctorProfile = () => {
     }, [appointments, doctor]);
 
     const averageRating = useMemo(() => {
-        if (Number.isFinite(doctor?.rating)) return doctor.rating;
         if (reviews.length > 0) {
             const total = reviews.reduce((sum, rev) => sum + (Number.isFinite(rev.rating) ? rev.rating : 0), 0);
             return total / reviews.length;
         }
+        if (Number.isFinite(doctor?.rating)) return doctor.rating;
         return 0;
     }, [doctor, reviews]);
 
     const totalReviews = useMemo(() => {
+        if (reviews.length > 0) return reviews.length;
         const fromDoctor = doctor?.reviewsCount ?? doctor?.reviews_count ?? doctor?.ratings_count;
         if (Number.isFinite(Number(fromDoctor))) return Number(fromDoctor);
-        if (reviews.length > 0) return reviews.length;
         return 0;
     }, [doctor, reviews]);
 
