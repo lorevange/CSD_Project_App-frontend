@@ -95,7 +95,7 @@ const DoctorCard = ({ doctor, isHighlighted, onSelect }) => {
             </div>
             <div className="doctor-actions">
                 {displayedPrice ? (
-                    <div className="price-tag">Da €{displayedPrice}</div>
+                    <div className="price-tag">{t('doctors.price_from', { price: displayedPrice })}</div>
                 ) : (
                     <div className="price-tag">{t('doctors.price_unavailable', 'Price unavailable')}</div>
                 )}

@@ -25,6 +25,7 @@
         "rating": "Valutazione",
         "reviews": "Recensioni",
         "price": "Prezzo",
+        "price_from": "Da {{price}}€",
         "price_unavailable": "Prezzo non disponibile",
         "book": "Prenota visita"
     },
@@ -129,7 +130,7 @@
         "saving": "Salvataggio in corso...",
         "error": "Impossibile salvare la prenotazione",
         "success": "Prenotazione Confermata!",
-        "success_message": "Riceverai una email di conferma a breve.",
+        "success_message": "Appuntamento prenotato con successo!",
         "book_now": "Prenota Ora",
         "no_prepayment": "Nessun pagamento anticipato richiesto",
         "no_services": "Nessun servizio disponibile.",
