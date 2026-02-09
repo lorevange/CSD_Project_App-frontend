@@ -63,7 +63,7 @@
 }
 
 .spec-name {
-    font-size: var(--font-size-md);
+    font-size: var(--font-size-sm);
     color: var(--text-main);
     margin: 0;
     word-wrap: break-word;
